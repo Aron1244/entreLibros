@@ -1,11 +1,56 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// src/pages/index.astro
+import Layout from "../layouts/Layout.astro";
+import HeroSection from "../components/HeroSection.tsx";
+import BookCarousel from "../components/BookCarouselTailwind.tsx";
+import CategoryGrid from "../components/CategoryGrid.tsx";
+import Testimonials from "../components/Testimonials.tsx";
+import Newsletter from "../components/Newsletter.tsx";
+import Navbar from "../components/Navbar";
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="EntreLibros - Tu librería online favorita">
+  <main class="bg-primary-light">
+    <!-- Navigation Bar -->
+    <Navbar />
+    <!-- Hero Section -->
+    <HeroSection />
+
+    <!-- Featured Books Carousel -->
+    <section class="py-12 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-7xl mx-auto">
+        <h2 class="text-3xl font-bold text-primary-dark mb-8 text-center">
+          Libros Destacados
+        </h2>
+        <BookCarousel />
+      </div>
+    </section>
+
+    <!-- Categories Grid -->
+    <section class="py-12 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-primary-dark mb-8 text-center">
+          Explora por Categorías
+        </h2>
+        <CategoryGrid />
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-16 bg-gray-100">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-primary-dark mb-12 text-center">
+          Lo que dicen nuestros lectores
+        </h2>
+        <Testimonials />
+      </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="py-16 bg-primary-dark">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <Newsletter />
+      </div>
+    </section>
+  </main>
 </Layout>

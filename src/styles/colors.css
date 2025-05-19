@@ -1,0 +1,38 @@
+:root {
+  --color-primary-dark: #0b3936;
+  --color-primary: #687051;
+  --color-primary-light: #bca486;
+}
+
+.bg-primary-dark {
+  background-color: var(--color-primary-dark);
+}
+
+.text-primary-dark {
+  color: var(--color-primary-dark);
+}
+
+.bg-primary {
+  background-color: var(--color-primary);
+}
+
+.text-primary {
+  color: var(--color-primary);
+}
+
+.bg-primary-light {
+  background-color: var(--color-primary-light);
+}
+
+.text-primary-light {
+  color: var(--color-primary-light);
+}
+
+/* Clases para hover states */
+.hover\:bg-primary-dark:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.hover\:text-primary-dark:hover {
+  color: var(--color-primary-dark);
+}
