@@ -1,0 +1,102 @@
+---
+
+import Layout from "../layouts/Layout.astro";
+
+let error = '';
+let form = {
+  name: '',
+  email: '',
+  password: '',
+  confirmPassword: ''
+};
+
+const handleSubmit = (event) => {
+  event.preventDefault();
+
+  const data = new FormData(event.target);
+  const name = data.get('name');
+  const email = data.get('email');
+  const password = data.get('password');
+  const confirmPassword = data.get('confirmPassword');
+
+  if (password !== confirmPassword) {
+    error = 'Las contraseñas no coinciden';
+    return;
+  }
+
+  // Aquí llamas a tu API o backend para registrar el usuario
+  console.log({ name, email, password });
+};
+---
+
+<Layout title="EntreLibros - Tu librería online favorita">
+    <div class="min-h-screen flex items-center justify-center bg-primary-dark px-4 py-12">
+      <div class="max-w-md w-full bg-primary-light rounded-lg p-8 shadow-lg text-white">
+        <h2 class="text-3xl font-extrabold mb-6 text-center">Crear cuenta</h2>
+    
+        <form on:submit={handleSubmit} class="space-y-6" method="POST" action="/register">
+          <div>
+            <label for="name" class="block mb-1 text-primary-dark font-semibold">Nombre completo</label>
+            <input
+              type="text"
+              name="name"
+              id="name"
+              class="w-full rounded-md px-4 py-3 text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-light bg-white"
+              placeholder="Tu nombre"
+              required
+            />
+          </div>
+    
+          <div>
+            <label for="email" class="block mb-1 text-primary-dark font-semibold">Correo electrónico</label>
+            <input
+              type="email"
+              name="email"
+              id="email"
+              class="w-full rounded-md px-4 py-3 text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-light bg-white"
+              placeholder="correo@ejemplo.com"
+              required
+            />
+          </div>
+    
+          <div>
+            <label for="password" class="block mb-1 text-primary-dark font-semibold">Contraseña</label>
+            <input
+              type="password"
+              name="password"
+              id="password"
+              class="w-full rounded-md px-4 py-3 text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-light bg-white"
+              placeholder="Mínimo 6 caracteres"
+              required
+              minlength="6"
+            />
+          </div>
+    
+          <div>
+            <label for="confirmPassword" class="block mb-1 text-primary-dark font-semibold">Confirmar contraseña</label>
+            <input
+              type="password"
+              name="confirmPassword"
+              id="confirmPassword"
+              class="w-full rounded-md px-4 py-3 text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-light bg-white"
+              placeholder="Repite tu contraseña"
+              required
+              minlength="6"
+            />
+          </div>
+    
+          {error && (
+            <p class="text-red-400 font-semibold text-center">{error}</p>
+          )}
+    
+          <button
+            type="submit"
+            class="w-full py-3 bg-primary-light text-primary-dark font-bold rounded-lg hover:bg-primary hover:text-white transition duration-300"
+          >
+            Registrarse
+          </button>
+        </form>
+      </div>
+    </div>
+</Layout>
+

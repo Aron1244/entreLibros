@@ -60,9 +60,26 @@ const Navbar = () => {
             <NavLink href="/books" label="Catálogo" scrolled={scrolled} />
             <NavLink href="/news" label="Novedades" scrolled={scrolled} />
             <NavLink href="/contact" label="Contacto" scrolled={scrolled} />
-            <div className="flex-1 max-w-xl">
+            <div className="flex-1 max-w-xl mr-0">
               <SearchButton />
             </div>
+            <a href="/cart">
+              <svg
+                className="w-8 h-8 text-primary-light rounded-2xl border border-primary-light"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M4 4a1 1 0 0 1 1-1h1.5a1 1 0 0 1 .979.796L7.939 6H19a1 1 0 0 1 .979 1.204l-1.25 6a1 1 0 0 1-.979.796H9.605l.208 1H17a3 3 0 1 1-2.83 2h-2.34a3 3 0 1 1-4.009-1.76L5.686 5H5a1 1 0 0 1-1-1Z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </a>
             <a href="/profile">
               <svg
                 className="w-7 h-7 text-primary-light"

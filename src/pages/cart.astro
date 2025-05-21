@@ -1,0 +1,14 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CartReact from '../components/Cart.tsx'; // Ajusta la ruta según tu estructura
+---
+
+<Layout>
+    <main class="bg-primary-dark">
+      <CartReact client:load />
+      <!-- client:load para hidratar y activar React en cliente -->
+    </main>
+</Layout>
+
+
+
