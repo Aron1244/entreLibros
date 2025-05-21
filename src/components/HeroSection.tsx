@@ -17,7 +17,7 @@ export default function HeroSection() {
               </span>
             </h1>
 
-            <p className="mt-6 text-lg text-primary-light/90 sm:text-xl md:mt-8 md:text-2xl max-w-lg mx-auto lg:mx-0">
+            <p className="mt-6 text-lg text-primary-light sm:text-xl md:mt-8 md:text-2xl max-w-lg mx-auto lg:mx-0">
               Más de 10,000 títulos disponibles con envío express o en formato
               digital al instante.
             </p>
