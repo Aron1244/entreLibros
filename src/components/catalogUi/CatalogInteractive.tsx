@@ -14,6 +14,7 @@ type Libro = {
   tipo: "fisico" | "ebook";
   precio: number;
   imagen: string;
+  editorial: string;
 };
 
 type ToastInfo = {
@@ -26,6 +27,7 @@ export default function CatalogoInteractivo() {
   const [libros, setLibros] = useState<Libro[]>([]);
   const [filtroCategoria, setFiltroCategoria] = useState("todos");
   const [filtroTipo, setFiltroTipo] = useState("todos");
+  const [filtroEditorial, setFiltroEditorial] = useState("todos");
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<ToastInfo>({
     visible: false,
@@ -49,7 +51,8 @@ export default function CatalogoInteractivo() {
           tipo: "fisico",
           precio: 14990,
           imagen:
-            "https://images.pexels.com/photos/1907785/pexels-photo-1907785.jpeg?auto=compress&cs=tinysrgb&w=800",
+            "https://www.espacioforestal.cl/cdn/shop/files/cienanosdesoledaddebolsillotd.png?v=1742224894",
+          editorial: "Sudamericana",
         },
         {
           id: 2,
@@ -60,7 +63,8 @@ export default function CatalogoInteractivo() {
           tipo: "ebook",
           precio: 7990,
           imagen:
-            "https://images.pexels.com/photos/1029141/pexels-photo-1029141.jpeg?auto=compress&cs=tinysrgb&w=800",
+            "https://contrapunto.cl/cdn/shop/files/9789877250992.png?v=1734626851",
+          editorial: "Grijalbo",
         },
         {
           id: 3,
@@ -71,7 +75,8 @@ export default function CatalogoInteractivo() {
           tipo: "fisico",
           precio: 9990,
           imagen:
-            "https://images.pexels.com/photos/2465877/pexels-photo-2465877.jpeg?auto=compress&cs=tinysrgb&w=800",
+            "https://contrapunto.cl/cdn/shop/files/27522.jpg?v=1725308995",
+          editorial: "Salamandra",
         },
         {
           id: 4,
@@ -82,7 +87,8 @@ export default function CatalogoInteractivo() {
           tipo: "fisico",
           precio: 12990,
           imagen:
-            "https://images.pexels.com/photos/3747139/pexels-photo-3747139.jpeg?auto=compress&cs=tinysrgb&w=800",
+            "https://www.penguinlibros.com/cl/3903314/harry-potter-y-la-piedra-filosofal-harry-potter-1.jpg",
+          editorial: "Salamandra",
         },
         {
           id: 5,
@@ -93,7 +99,8 @@ export default function CatalogoInteractivo() {
           tipo: "ebook",
           precio: 8990,
           imagen:
-            "https://images.pexels.com/photos/4861347/pexels-photo-4861347.jpeg?auto=compress&cs=tinysrgb&w=800",
+            "https://contrapunto.cl/cdn/shop/files/11501.jpg?v=1725989597",
+          editorial: "Kairós",
         },
         {
           id: 6,
@@ -104,7 +111,8 @@ export default function CatalogoInteractivo() {
           tipo: "ebook",
           precio: 6990,
           imagen:
-            "https://images.pexels.com/photos/5834332/pexels-photo-5834332.jpeg?auto=compress&cs=tinysrgb&w=800",
+            "https://anylang.net/sites/default/files/covers/1984.jpg",
+          editorial: "Debolsillo",
         },
       ];
       setLibros(data);
@@ -118,13 +126,18 @@ export default function CatalogoInteractivo() {
     ...Array.from(new Set(libros.map((l) => l.categoria))),
   ];
   const tipos = ["todos", "fisico", "ebook"];
+  const editoriales = [
+    "todos",
+    ...Array.from(new Set(libros.map((l) => l.editorial).filter(Boolean))),
+  ];
 
   // Filter books based on selected filters
   const librosFiltrados = libros.filter((libro) => {
     const categoriaOK =
       filtroCategoria === "todos" || libro.categoria === filtroCategoria;
     const tipoOK = filtroTipo === "todos" || libro.tipo === filtroTipo;
-    return categoriaOK && tipoOK;
+    const editorialOK = filtroEditorial === "todos" || libro.editorial === filtroEditorial;
+    return categoriaOK && tipoOK && editorialOK;
   });
 
   // Calcular paginación
@@ -137,7 +150,7 @@ export default function CatalogoInteractivo() {
   // Resetear página al cambiar filtros
   useEffect(() => {
     setCurrentPage(1);
-  }, [filtroCategoria, filtroTipo]);
+  }, [filtroCategoria, filtroTipo, filtroEditorial]);
 
   // Handle add to cart
   const handleAddToCart = (libro: Libro) => {
@@ -163,6 +176,7 @@ export default function CatalogoInteractivo() {
   const resetFilters = () => {
     setFiltroCategoria("todos");
     setFiltroTipo("todos");
+    setFiltroEditorial("todos");
   };
 
   // Close toast
@@ -188,10 +202,13 @@ export default function CatalogoInteractivo() {
         <FilterBar
           categorias={categorias}
           tipos={tipos}
+          editoriales={editoriales}
           filtroCategoria={filtroCategoria}
           filtroTipo={filtroTipo}
+          filtroEditorial={filtroEditorial}
           onCategoriaChange={setFiltroCategoria}
           onTipoChange={setFiltroTipo}
+          onEditorialChange={setFiltroEditorial}
           totalLibros={libros.length}
           librosFiltrados={librosFiltrados.length}
         />

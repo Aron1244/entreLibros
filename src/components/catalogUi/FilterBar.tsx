@@ -1,10 +1,13 @@
 interface FilterBarProps {
   categorias: string[];
   tipos: string[];
+  editoriales: string[];
   filtroCategoria: string;
   filtroTipo: string;
+  filtroEditorial: string;
   onCategoriaChange: (categoria: string) => void;
   onTipoChange: (tipo: string) => void;
+  onEditorialChange: (editorial: string) => void;
   totalLibros: number;
   librosFiltrados: number;
 }
@@ -12,10 +15,13 @@ interface FilterBarProps {
 export default function FilterBar({
   categorias,
   tipos,
+  editoriales,
   filtroCategoria,
   filtroTipo,
+  filtroEditorial,
   onCategoriaChange,
   onTipoChange,
+  onEditorialChange,
   totalLibros,
   librosFiltrados,
 }: FilterBarProps) {
@@ -106,11 +112,48 @@ export default function FilterBar({
             </div>
           </div>
 
-          {(filtroCategoria !== "todos" || filtroTipo !== "todos") && (
+          <div className="relative">
+            <label
+              htmlFor="editorial"
+              className="block text-xs font-medium text-white mb-1"
+            >
+              Editorial
+            </label>
+            <select
+              id="editorial"
+              value={filtroEditorial}
+              onChange={(e) => onEditorialChange(e.target.value)}
+              className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm border transition-colors duration-200 appearance-none"
+            >
+              {editoriales.map((editorial) => (
+                <option key={editorial} value={editorial}>
+                  {editorial === "todos" ? "Todas las editoriales" : editorial}
+                </option>
+              ))}
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 pt-5 text-gray-700">
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </div>
+          </div>
+
+          {(filtroCategoria !== "todos" || filtroTipo !== "todos" || filtroEditorial !== "todos") && (
             <button
               onClick={() => {
                 onCategoriaChange("todos");
                 onTipoChange("todos");
+                onEditorialChange("todos");
               }}
               className="inline-flex items-center text-sm font-medium text-primary hover:text-primary-dark mt-auto py-2"
             >

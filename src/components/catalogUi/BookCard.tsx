@@ -8,6 +8,7 @@ type Libro = {
   tipo: "fisico" | "ebook";
   precio: number;
   imagen: string;
+  editorial: string;
 };
 
 interface BookCardProps {
@@ -40,6 +41,7 @@ export default function BookCard({
         className="relative overflow-hidden cursor-pointer"
       >
         <div className="aspect-[3/4] w-full">
+          {/* Usar Astro <Image> para optimización si se usa en .astro, si no, dejar img */}
           <img
             src={libro.imagen}
             alt={libro.titulo}
@@ -63,6 +65,9 @@ export default function BookCard({
         <div className="flex justify-between items-start mb-1">
           <span className="inline-block px-2 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded">
             {libro.categoria}
+          </span>
+          <span className="inline-block px-2 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded ml-2">
+            {libro.editorial}
           </span>
         </div>
 
