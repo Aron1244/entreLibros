@@ -16,6 +16,7 @@
     "astro": "^5.7.13",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-reader": "^2.0.13",
     "tailwindcss": "^4.1.7"
   }
 }
