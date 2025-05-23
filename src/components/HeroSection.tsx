@@ -47,7 +47,7 @@ export default function HeroSection() {
 
               <a
                 href="/epub"
-                className="px-8 py-4 border-2 border-primary-light text-primary-light font-bold rounded-lg hover:bg-primary-light hover:text-white transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg text-lg flex items-center justify-center gap-2"
+                className="px-8 py-4 border-2 border-primary-light text-primary-light font-bold rounded-lg hover:bg-secondary-dark hover:text-white transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg text-lg flex items-center justify-center gap-2"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

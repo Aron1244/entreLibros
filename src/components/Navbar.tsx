@@ -55,17 +55,17 @@ const Navbar = () => {
             </span>
           </a>
 
-          <div className="hidden md:flex space-x-8 items-center flex-1 justify-end text-primary-light">
+          <div className="hidden md:flex items-center flex-1 justify-end text-primary-light gap-4">
             <NavLink href="/" label="Inicio" scrolled={scrolled} />
-            <NavLink href="/books" label="Catálogo" scrolled={scrolled} />
+            <NavLink href="/catalog" label="Catálogo" scrolled={scrolled} />
             <NavLink href="/news" label="Novedades" scrolled={scrolled} />
             <NavLink href="/contact" label="Contacto" scrolled={scrolled} />
-            <div className="flex-1 max-w-xl mr-0">
+            <div className="flex-1 max-w-xl min-w-0 mr-4">
               <SearchButton />
             </div>
-            <a href="/cart">
+            <a href="/cart" aria-label="Carro de compras" className="ml-2">
               <svg
-                className="w-8 h-8 text-primary-light rounded-2xl border border-primary-light"
+                className="w-8 h-8 text-primary-light rounded-3xl border border-primary-light p-1 transition-colors duration-200 hover:bg-white hover:text-primary-light hover:border-primary"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -80,9 +80,9 @@ const Navbar = () => {
                 />
               </svg>
             </a>
-            <a href="/profile">
+            <a href="/profile" aria-label="Perfil" className="ml-2 flex items-center gap-1">
               <svg
-                className="w-7 h-7 text-primary-light"
+                className="w-7 h-7 text-primary-light hover:text-primary-light rounded-3xl border border-primary-light transition-colors duration-200 hover:bg-white hover:text-primary hover:border-primary"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -96,7 +96,7 @@ const Navbar = () => {
                   clipRule="evenodd"
                 />
               </svg>
-              Perfil
+              <span className="text-xs">Perfil</span>
             </a>
           </div>
 
@@ -140,10 +140,11 @@ const Navbar = () => {
           transition-all 
           duration-300 
           ease-in-out
-          ${isOpen ? "max-h-60 opacity-100 mt-4" : "max-h-0 opacity-0"}
+          ${isOpen ? "max-h-96 opacity-100 mt-4" : "max-h-0 opacity-0"}
         `}
         >
           <div className="flex flex-col space-y-3 py-4 bg-primary-light rounded-lg shadow-lg px-4 animate-fade-in">
+            <SearchButton />
             <MobileNavLink
               href="/"
               label="Inicio"

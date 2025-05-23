@@ -165,7 +165,7 @@ export default function Cart() {
               Total: ${totalPrice.toLocaleString()}
             </span>
             <button
-              className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition"
+              className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary-dark transition"
               aria-label="Proceder al pago"
               onClick={() => alert("Proceder al pago")}
             >

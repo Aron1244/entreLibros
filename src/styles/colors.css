@@ -2,6 +2,12 @@
   --color-primary-dark: #0b3936;
   --color-primary: #687051;
   --color-primary-light: #bca486;
+  --color-secondary-dark: #115c57;
+  --color-secondary: #9aa579;
+  --color-secondary-light: #d1c6b8;
+  --color-accent-dark: #083b38;
+  --color-accent: #687051;
+  --color-accent-light: #bca486;
 }
 
 .bg-primary-dark {
@@ -35,4 +41,118 @@
 
 .hover\:text-primary-dark:hover {
   color: var(--color-primary-dark);
+}
+
+.hover\:bg-primary:hover {
+  background-color: var(--color-primary);
+}
+
+.hover\:text-primary:hover {
+  color: var(--color-primary);
+}
+
+.hover\:bg-primary-light:hover {
+  background-color: var(--color-primary-light);
+}
+
+.hover\:text-primary-light:hover {
+  color: var(--color-primary-light);
+}
+
+.bg-secondary-dark {
+  background-color: var(--color-secondary-dark);
+}
+
+.text-secondary-dark {
+  color: var(--color-secondary-dark);
+}
+
+.bg-secondary {
+  background-color: var(--color-secondary);
+}
+
+.text-secondary {
+  color: var(--color-secondary);
+}
+
+.bg-secondary-light {
+  background-color: var(--color-secondary-light);
+}
+
+.text-secondary-light {
+  color: var(--color-secondary-light);
+}
+
+/* Clases para hover states */
+.hover\:bg-secondary-dark:hover {
+  background-color: var(--color-secondary-dark);
+}
+
+.hover\:text-secondary-dark:hover {
+  color: var(--color-secondary-dark);
+}
+
+.hover\:bg-secondary:hover {
+  background-color: var(--color-secondary);
+}
+
+.hover\:text-secondary:hover {
+  color: var(--color-secondary);
+}
+
+.hover\:bg-secondary-light:hover {
+  background-color: var(--color-secondary-light);
+}
+
+.hover\:text-secondary-light:hover {
+  color: var(--color-secondary-light);
+}
+
+.bg-accent-dark {
+  background-color: var(--color-accent-dark);
+}
+
+.text-accent-dark {
+  color: var(--color-accent-dark);
+}
+
+.bg-accent {
+  background-color: var(--color-accent);
+}
+
+.text-accent {
+  color: var(--color-accent);
+}
+
+.bg-accent-light {
+  background-color: var(--color-accent-light);
+}
+
+.text-accent-light {
+  color: var(--color-accent-light);
+}
+
+/* Clases para hover states */
+.hover\:bg-accent-dark:hover {
+  background-color: var(--color-accent-dark);
+}
+
+.hover\:text-accent-dark:hover {
+  color: var(--color-accent-dark);
+}
+
+.hover\:bg-accent:hover {
+  background-color: var(--color-accent);
+}
+
+.hover\:text-accent:hover {
+  color: var(--color-accent);
+}
+
+.hover\:bg-accent-light:hover {
+  background-color: var(--color-accent-light);
+}
+
+.hover\:text-accent-light:hover {
+  color: var(--color-accent-light);
 }

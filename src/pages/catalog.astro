@@ -1,0 +1,17 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CatalogoInteractivo from "../components/catalogUi/CatalogInteractive.tsx";
+---
+
+<Layout>
+  <main class="min-h-screen bg-gray-50">
+    <CatalogoInteractivo client:load />
+  </main>
+</Layout>
+
+<style>
+  main {
+    width: 100%;
+    margin: 0 auto;
+  }
+</style>

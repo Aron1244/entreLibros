@@ -27,7 +27,7 @@ export default function Newsletter() {
           <div className="mt-3 sm:mt-0">
             <button
               type="submit"
-              className="block w-full px-6 py-3 bg-primary hover:bg-primary-dark text-white font-medium rounded-lg hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-light focus:ring-offset-2 focus:ring-offset-primary-dark transition-all duration-200"
+              className="block w-full px-6 py-3 bg-primary hover:bg-secondary-dark text-white font-medium rounded-lg hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-light focus:ring-offset-2 focus:ring-offset-primary-dark transition-all duration-200"
             >
               Suscribirse
             </button>

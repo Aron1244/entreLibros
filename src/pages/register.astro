@@ -10,10 +10,10 @@ let form = {
   confirmPassword: ''
 };
 
-const handleSubmit = (event) => {
+const handleSubmit = (event: Event) => {
   event.preventDefault();
 
-  const data = new FormData(event.target);
+  const data = new FormData(event.target as HTMLFormElement);
   const name = data.get('name');
   const email = data.get('email');
   const password = data.get('password');
@@ -34,7 +34,7 @@ const handleSubmit = (event) => {
       <div class="max-w-md w-full bg-primary-light rounded-lg p-8 shadow-lg text-white">
         <h2 class="text-3xl font-extrabold mb-6 text-center">Crear cuenta</h2>
     
-        <form on:submit={handleSubmit} class="space-y-6" method="POST" action="/register">
+        <form class="space-y-6" method="POST" action="/register">
           <div>
             <label for="name" class="block mb-1 text-primary-dark font-semibold">Nombre completo</label>
             <input
