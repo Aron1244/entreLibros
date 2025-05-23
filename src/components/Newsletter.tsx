@@ -33,7 +33,7 @@ export default function Newsletter() {
             </button>
           </div>
         </div>
-        <p className="mt-4 text-sm text-primary-light/80">
+        <p className="mt-4 text-sm text-primary-light">
           Respetamos tu privacidad. Nunca compartiremos tu email.
         </p>
       </div>
