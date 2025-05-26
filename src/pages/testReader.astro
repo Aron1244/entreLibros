@@ -1,10 +1,10 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { App as ReaderReact } from "../components/Reader.tsx";
+import { EpubViewer } from "../components/Reader.tsx";
 ---
 
 <Layout>
   <main>
-    <ReaderReact client:load />
+    <EpubViewer client:load url="/books/The_Sunlit_Man.epub" initialTheme="dark" />
   </main>
 </Layout>
