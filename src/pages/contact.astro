@@ -1,10 +1,173 @@
 ---
-import ContactReact from '../components/Contact.tsx'; // Ajusta la ruta a tu componente React
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
+
+const contactInfo = {
+  address: "Av. Providencia 1234, Providencia",
+  city: "Santiago",
+  country: "Chile",
+  phone: "+56 2 2123 4567",
+  email: "contacto@entrelibros.cl",
+  schedule: {
+    weekdays: "Lunes a Viernes: 10:00 - 20:00",
+    saturday: "Sábado: 10:00 - 18:00",
+    sunday: "Domingo: Cerrado"
+  },
+  socialMedia: {
+    facebook: "https://facebook.com/entrelibros",
+    instagram: "https://instagram.com/entrelibros",
+    twitter: "https://twitter.com/entrelibros"
+  }
+};
 ---
 
-<Layout>
-    <main>
-      <ContactReact />
-    </main>
+<Layout title="Contacto | EntreLibros" description="Contáctanos para resolver tus dudas sobre libros físicos, ebooks o cualquier otra consulta. Estamos aquí para ayudarte.">
+  <main class="bg-primary-dark min-h-screen text-primary-light">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+      <!-- Header Section -->
+      <div class="text-center mb-16">
+        <h1 class="text-4xl md:text-5xl font-serif font-bold text-primary-light mb-6">
+          Contacto
+        </h1>
+        <p class="text-xl text-primary-light max-w-2xl mx-auto">
+          ¿Tienes alguna pregunta sobre nuestros libros o servicios? 
+          Estamos aquí para ayudarte.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-12 items-start">
+        <!-- Contact Form -->
+        <div class="bg-secondary-dark backdrop-blur-lg rounded-2xl p-8 md:p-10">
+          <form class="space-y-6">
+            <div class="grid sm:grid-cols-2 gap-6">
+              <div>
+                <label for="name" class="block text-sm font-medium mb-2">Nombre</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  required
+                  class="w-full px-4 py-3 rounded-lg text-white bg-white/10 border border-primary-light focus:border-accent focus:ring-2 focus:ring-accent/50 transition-all duration-300 placeholder-primary-light/50"
+                  placeholder="Tu nombre"
+                />
+              </div>
+              <div>
+                <label for="email" class="block text-sm font-medium mb-2">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  required
+                  class="w-full px-4 py-3 rounded-lg text-white bg-white/10 border border-primary-light focus:border-accent focus:ring-2 focus:ring-accent/50 transition-all duration-300 placeholder-primary-light/50"
+                  placeholder="tu@email.com"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label for="subject" class="block text-sm font-medium mb-2">Asunto</label>
+              <select
+                id="subject"
+                name="subject"
+                required
+                class="w-full px-4 py-3 rounded-lg text-white bg-white/10 border border-primary-light focus:border-accent focus:ring-2 focus:ring-accent/50 transition-all duration-300"
+              >
+                <option value="">Selecciona un asunto</option>
+                <option value="pedido">Consulta sobre pedido</option>
+                <option value="producto">Información de producto</option>
+                <option value="devolucion">Devoluciones</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="message" class="block text-sm font-medium mb-2">Mensaje</label>
+              <textarea
+                id="message"
+                name="message"
+                rows="6"
+                required
+                class="w-full px-4 py-3 rounded-lg text-white bg-white/10 border border-primary-light focus:border-accent focus:ring-2 focus:ring-accent/50 transition-all duration-300 placeholder-primary-light/50"
+                placeholder="¿En qué podemos ayudarte?"
+              ></textarea>
+            </div>
+
+            <button
+              type="submit"
+              class="w-full bg-accent hover:bg-accent-dark text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 focus:ring-2 focus:ring-offset-2 focus:ring-accent focus:ring-offset-primary-dark"
+            >
+              Enviar mensaje
+            </button>
+          </form>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="space-y-12">
+          <!-- Location Info -->
+          <div class="bg-secondary-dark backdrop-blur-lg rounded-2xl p-8">
+            <h2 class="text-2xl font-serif font-bold mb-6">Nuestra ubicación</h2>
+            <div class="space-y-4">
+              <p class="flex items-start gap-3">
+                <span class="text-accent">📍</span>
+                <span>{contactInfo.address}, {contactInfo.city}, {contactInfo.country}</span>
+              </p>
+              <p class="flex items-start gap-3">
+                <span class="text-accent">📞</span>
+                <span>{contactInfo.phone}</span>
+              </p>
+              <p class="flex items-start gap-3">
+                <span class="text-accent">✉️</span>
+                <a href={`mailto:${contactInfo.email}`} class="hover:text-accent transition-colors">
+                  {contactInfo.email}
+                </a>
+              </p>
+            </div>
+          </div>
+
+          <!-- Business Hours -->
+          <div class="bg-secondary-dark backdrop-blur-lg rounded-2xl p-8">
+            <h2 class="text-2xl font-serif font-bold mb-6">Horario de atención</h2>
+            <div class="space-y-3">
+              <p>{contactInfo.schedule.weekdays}</p>
+              <p>{contactInfo.schedule.saturday}</p>
+              <p>{contactInfo.schedule.sunday}</p>
+            </div>
+          </div>
+
+          <!-- Social Media -->
+          <div class="bg-secondary-dark backdrop-blur-lg rounded-2xl p-8">
+            <h2 class="text-2xl font-serif font-bold mb-6">Síguenos</h2>
+            <div class="flex gap-6">
+              <a
+                href={contactInfo.socialMedia.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-primary-light/80 hover:text-accent transition-colors"
+                aria-label="Facebook"
+              >
+                Facebook
+              </a>
+              <a
+                href={contactInfo.socialMedia.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-primary-light/80 hover:text-accent transition-colors"
+                aria-label="Instagram"
+              >
+                Instagram
+              </a>
+              <a
+                href={contactInfo.socialMedia.twitter}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-primary-light/80 hover:text-accent transition-colors"
+                aria-label="Twitter"
+              >
+                Twitter
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
 </Layout>

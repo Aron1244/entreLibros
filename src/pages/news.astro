@@ -1,0 +1,151 @@
+---
+import Layout from "../layouts/Layout.astro";
+import NewsCard from "../components/NewsCard.astro";
+
+const newsItems = [
+  {
+    id: 1,
+    title: "Nuevo lanzamiento de libros de ciencia ficción",
+    date: "2025-05-20",
+    description:
+      "Explora nuestra nueva colección de libros de ciencia ficción que incluyen autores clásicos y contemporáneos. Desde futuros distópicos hasta aventuras espaciales, hay algo para cada fan del género.",
+    image: "https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+  },
+  {
+    id: 2,
+    title: "Evento de firma de libros con autor invitado",
+    date: "2025-05-15",
+    description:
+      "Ven a nuestro evento el próximo viernes para conocer a Juan Pérez y obtener un autógrafo en su último libro. Habrá lecturas seleccionadas y una sesión de preguntas y respuestas con el autor.",
+    image: "https://images.pexels.com/photos/3747139/pexels-photo-3747139.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+  },
+  {
+    id: 3,
+    title: "Promoción especial por el mes del libro",
+    date: "2025-05-01",
+    description:
+      "Aprovecha descuentos de hasta un 30% en títulos seleccionados durante todo el mes de mayo. Es la oportunidad perfecta para ampliar tu biblioteca personal o conseguir ese libro que has estado esperando.",
+    image: "https://images.pexels.com/photos/5834/nature-grass-leaf-green.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+  },
+];
+---
+
+<Layout title="Novedades | EntreLibros" description="Mantente al día con las últimas novedades, eventos y promociones de EntreLibros, tu librería online favorita.">
+  <main class="bg-primary-dark min-h-screen">
+    <!-- Hero section -->
+    <div class="relative bg-gradient-to-br from-primary-dark to-secondary py-20 md:py-28">
+      <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute w-full h-full bg-[url('https://images.pexels.com/photos/694740/pexels-photo-694740.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')] opacity-10 bg-cover bg-center"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-secondary-dark/80 to-transparent"></div>
+      </div>
+      
+      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto text-center">
+          <span class="inline-block text-accent font-medium mb-4 tracking-wide animate-fade-in">ÚLTIMAS ACTUALIZACIONES</span>
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-6 animate-fade-in" style="animation-delay: 100ms;">
+            Novedades y Eventos
+          </h1>
+          <p class="text-lg text-primary-light animate-fade-in" style="animation-delay: 200ms;">
+            Descubre las últimas noticias, eventos y promociones especiales de EntreLibros. 
+            Mantente al día con todo lo que sucede en el mundo de los libros.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content section -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+      <!-- Category filters -->
+      <div class="flex flex-wrap gap-3 mb-12 justify-center">
+        <button class="px-6 py-2.5 rounded-full bg-accent text-white font-medium shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5">
+          Todos
+        </button>
+        <button class="px-6 py-2.5 rounded-full bg-white text-secondary hover:bg-secondary/5 font-medium shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5">
+          Eventos
+        </button>
+        <button class="px-6 py-2.5 rounded-full bg-white text-secondary hover:bg-secondary/5 font-medium shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5">
+          Lanzamientos
+        </button>
+        <button class="px-6 py-2.5 rounded-full bg-white text-secondary hover:bg-secondary/5 font-medium shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5">
+          Promociones
+        </button>
+      </div>
+
+      <!-- News grid -->
+      <div class="space-y-10">
+        {newsItems.map((newsItem) => (
+          <NewsCard {...newsItem} />
+        ))}
+      </div>
+
+      <!-- Newsletter section -->
+      <div class="mt-20 bg-white shadow-xl overflow-hidden">
+        <div class="relative px-6 py-10 md:p-12 text-center">
+          <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-1 bg-accent"></div>
+          
+          <h2 class="text-2xl md:text-3xl font-serif font-bold text-secondary-dark mb-4">
+            ¿No quieres perderte nada?
+          </h2>
+          <p class="text-secondary/80 mb-8 max-w-2xl mx-auto">
+            Suscríbete a nuestro boletín y recibe las últimas novedades, ofertas exclusivas 
+            y recomendaciones personalizadas directamente en tu correo.
+          </p>
+          
+          <form class="max-w-md mx-auto flex flex-col sm:flex-row gap-3 mb-4">
+            <input
+              type="email"
+              placeholder="Tu correo electrónico"
+              class="flex-1 px-4 py-3 rounded-lg border border-secondary/20 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+              required
+            />
+            <button
+              type="submit"
+              class="bg-accent hover:bg-accent-dark text-white px-8 py-3 rounded-lg font-medium transition-all hover:shadow-lg hover:-translate-y-0.5"
+            >
+              Suscribirme
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="mt-12 flex justify-center">
+        <nav class="inline-flex items-center rounded-lg shadow-sm bg-white" aria-label="Pagination">
+          <button class="px-4 py-2 rounded-l-lg border border-secondary/10 text-secondary hover:bg-secondary/5 transition-colors">
+            Anterior
+          </button>
+          <button class="px-4 py-2 border-t border-b border-secondary/10 bg-accent text-white font-medium">
+            1
+          </button>
+          <button class="px-4 py-2 border-t border-b border-secondary/10 text-secondary hover:bg-secondary/5 transition-colors">
+            2
+          </button>
+          <button class="px-4 py-2 border-t border-b border-secondary/10 text-secondary hover:bg-secondary/5 transition-colors">
+            3
+          </button>
+          <button class="px-4 py-2 rounded-r-lg border border-secondary/10 text-secondary hover:bg-secondary/5 transition-colors">
+            Siguiente
+          </button>
+        </nav>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  @keyframes fadeIn {
+    from { 
+      opacity: 0; 
+      transform: translateY(20px); 
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+    opacity: 0;
+  }
+</style>
