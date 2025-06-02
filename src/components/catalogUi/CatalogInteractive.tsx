@@ -114,6 +114,16 @@ export default function CatalogoInteractivo() {
             "https://anylang.net/sites/default/files/covers/1984.jpg",
           editorial: "Debolsillo",
         },
+        {
+          id: 7,
+          titulo: "The sunlit man",
+          descripcion: "A gripping thriller by the renowned author, exploring themes of power and betrayal in a dystopian future.",
+          categoria: "Thriller",
+          tipo: "ebook",
+          precio: 10990,
+          imagen: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1696146860i/60531420.jpg",
+          editorial: "Tor",
+        }
       ];
       setLibros(data);
       setLoading(false);

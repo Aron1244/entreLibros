@@ -25,6 +25,10 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [toc, setToc] = useState<TocItem[]>([]);
+  const [font, setFont] = useState<"serif" | "sans" | "monospace">("serif");
+  const [fontDropdownOpen, setFontDropdownOpen] = useState(false);
+  const [fontSize, setFontSize] = useState(1); // Tamaño inicial
+  const [fontSizeBarOpen, setFontSizeBarOpen] = useState(false);
 
   useEffect(() => {
     if (renditionRef.current) {
@@ -51,25 +55,59 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
 
     renditionRef.current = rendition;
 
+    // REGISTRA LOS TEMAS SOLO UNA VEZ POR INSTANCIA
+    if (!rendition.themes._themes["light"]) {
+      rendition.themes.register("light", {
+        body: { color: "#000", background: "#fff" },
+        "*": { color: "#000 !important", background: "#fff !important" },
+      });
+    }
+    if (!rendition.themes._themes["dark"]) {
+      rendition.themes.register("dark", {
+        body: { color: "#fff", background: "#000" },
+        "*": { color: "#fff !important", background: "#000 !important" },
+      });
+    }
+
     rendition.display(String(location));
 
     rendition.on("relocated", (location: { start: { cfi: any } }) => {
       setLocation(location?.start?.cfi || "0");
     });
 
-    // Obtener TOC y mostrar en consola
     book.loaded.navigation.then((nav) => {
-      console.log("TOC completo:", nav.toc);
       setToc(nav.toc);
     });
 
-    applyTheme(rendition, theme);
+    // Selecciona el tema inicial
+    rendition.themes.select(theme);
 
     return () => {
       rendition.destroy();
       book.destroy();
     };
   }, [url]);
+
+  useEffect(() => {
+    if (renditionRef.current) {
+      renditionRef.current.themes.select(theme);
+      // Fuerza un re-render manteniendo la ubicación actual
+      renditionRef.current.display(String(location));
+    }
+  }, [theme, location]);
+
+  useEffect(() => {
+    if (renditionRef.current) {
+      // Aplica la fuente seleccionada
+      renditionRef.current.themes.font(font);
+    }
+  }, [font]);
+
+  useEffect(() => {
+    if (renditionRef.current) {
+      renditionRef.current.themes.fontSize(`${fontSize * 100}%`);
+    }
+  }, [fontSize]);
 
   const goTo = (href: string) => {
     if (!renditionRef.current || !bookRef.current) return;
@@ -99,53 +137,159 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
       });
   };
 
+  const toggleThemeDropdown = () => {
+    setDropdownOpen((open) => !open);
+    if (!dropdownOpen) {
+      setFontDropdownOpen(false);
+      setFontSizeBarOpen(false);
+      setSidebarOpen(false);
+    }
+  };
+
+  const toggleFontDropdown = () => {
+    setFontDropdownOpen((open) => !open);
+    if (!fontDropdownOpen) {
+      setDropdownOpen(false);
+      setFontSizeBarOpen(false);
+      setSidebarOpen(false);
+    }
+  };
+
+  const toggleFontSizeBar = () => {
+    setFontSizeBarOpen((open) => !open);
+    if (!fontSizeBarOpen) {
+      setDropdownOpen(false);
+      setFontDropdownOpen(false);
+      setSidebarOpen(false);
+    }
+  };
+
+  const toggleSidebar = () => {
+    setSidebarOpen((open) => !open);
+    if (!sidebarOpen) {
+      setDropdownOpen(false);
+      setFontDropdownOpen(false);
+      setFontSizeBarOpen(false);
+    }
+  };
+
   return (
     <div className="pt-20 bg-primary-dark">
       {/* Barra superior */}
       <div className="flex gap-4 mb-4 justify-center relative">
         {/* Botón Tema */}
-        <button
-          className="px-4 py-2 rounded bg-primary text-primary-light border border-primary-dark"
-          onClick={() => setDropdownOpen((open) => !open)}
-        >
-          Tema
-        </button>
+        <div className="relative">
+          <button
+            className="px-4 py-2 rounded bg-primary text-primary-light border border-primary-dark transition duration-300 hover:scale-105 hover:bg-opacity-80"
+            onClick={toggleThemeDropdown}
+          >
+            Tema
+          </button>
+          {dropdownOpen && (
+            <div className="absolute left-0 mt-2 w-40 bg-secondary-light rounded shadow-lg border border-primary-dark z-30">
+              <button
+                onClick={() => {
+                  setTheme("light");
+                  setDropdownOpen(false);
+                }}
+                className={`block w-full px-4 py-2 hover:bg-primary-light ${
+                  theme === "light" ? "font-bold underline" : ""
+                }`}
+              >
+                Tema Claro
+              </button>
+              <button
+                onClick={() => {
+                  setTheme("dark");
+                  setDropdownOpen(false);
+                }}
+                className={`block w-full px-4 py-2 hover:bg-primary-light ${
+                  theme === "dark" ? "font-bold underline" : ""
+                }`}
+              >
+                Tema Oscuro
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Botón Fuente */}
+        <div className="relative">
+          <button
+            className="px-4 py-2 rounded bg-primary text-primary-light border border-primary-dark transition duration-300 hover:scale-105 hover:bg-opacity-80"
+            onClick={toggleFontDropdown}
+          >
+            Fuente
+          </button>
+          {fontDropdownOpen && (
+            <div className="absolute left-0 mt-2 w-40 bg-secondary-light rounded shadow-lg border border-primary-dark z-30">
+              <button
+                onClick={() => {
+                  setFont("serif");
+                  setFontDropdownOpen(false);
+                }}
+                className={`block w-full px-4 py-2 hover:bg-primary-light ${
+                  font === "serif" ? "font-bold underline" : ""
+                }`}
+              >
+                Serif
+              </button>
+              <button
+                onClick={() => {
+                  setFont("sans");
+                  setFontDropdownOpen(false);
+                }}
+                className={`block w-full px-4 py-2 hover:bg-primary-light ${
+                  font === "sans" ? "font-bold underline" : ""
+                }`}
+              >
+                Sans
+              </button>
+              <button
+                onClick={() => {
+                  setFont("monospace");
+                  setFontDropdownOpen(false);
+                }}
+                className={`block w-full px-4 py-2 hover:bg-primary-light ${
+                  font === "monospace" ? "font-bold underline" : ""
+                }`}
+              >
+                Monospace
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Botón Tamaño */}
+        <div className="relative">
+          <button
+            className="px-4 py-2 rounded bg-primary text-primary-light border border-primary-dark transition duration-300 hover:scale-105 hover:bg-opacity-80"
+            onClick={toggleFontSizeBar}
+          >
+            Tamaño
+          </button>
+          {fontSizeBarOpen && (
+            <div className="absolute left-0 mt-2 w-64 bg-secondary-light rounded shadow-lg border border-primary-dark z-30 p-4">
+              <input
+                type="range"
+                min="0.5"
+                max="1.5"
+                step="0.1"
+                value={fontSize}
+                onChange={(e) => setFontSize(parseFloat(e.target.value))}
+                className="w-full"
+              />
+            </div>
+          )}
+        </div>
 
         {/* Botón Capítulos */}
         <button
-          className="px-4 py-2 rounded bg-primary text-primary-light border border-primary-dark"
-          onClick={() => setSidebarOpen(true)}
+          className="px-4 py-2 rounded bg-primary text-primary-light border border-primary-dark transition duration-300 hover:scale-105 hover:bg-opacity-80"
+          onClick={toggleSidebar}
         >
           Capítulos
         </button>
-
-        {/* Dropdown tema */}
-        {dropdownOpen && (
-          <div className="absolute z-10 mt-12 w-40 bg-secondary-light rounded shadow-lg border border-primary-dark">
-            <button
-              onClick={() => {
-                setTheme("light");
-                setDropdownOpen(false);
-              }}
-              className={`block w-full px-4 py-2 hover:bg-primary-light ${
-                theme === "light" ? "font-bold underline" : ""
-              }`}
-            >
-              Tema Claro
-            </button>
-            <button
-              onClick={() => {
-                setTheme("dark");
-                setDropdownOpen(false);
-              }}
-              className={`block w-full px-4 py-2 hover:bg-primary-light ${
-                theme === "dark" ? "font-bold underline" : ""
-              }`}
-            >
-              Tema Oscuro
-            </button>
-          </div>
-        )}
       </div>
 
       {/* Contenedor principal con panel lateral */}
@@ -174,18 +318,26 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
           </div>
         )}
 
+        {/* Overlay blur */}
+        {sidebarOpen && (
+          <div
+            className="absolute inset-0 z-10 backdrop-blur-sm bg-black/10 transition duration-300"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
         {/* Zonas invisibles para navegación */}
         <div
-          className="absolute left-0 top-0 h-full w-1/6 z-10"
+          className="absolute left-0 top-0 h-full w-1/6 z-20" // <--- z-20
           onClick={goPrev}
         />
         <div
-          className="absolute right-0 top-0 h-full w-1/6 z-10"
+          className="absolute right-0 top-0 h-full w-1/6 z-20" // <--- z-20
           onClick={goNext}
         />
 
         {/* Lector EPUB */}
-        <div ref={viewerRef} className="w-full h-full" />
+        <div ref={viewerRef} className="w-full h-full relative z-0" />
       </div>
     </div>
   );
@@ -193,14 +345,6 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
 
 const applyTheme = (rendition: Rendition, theme: ITheme) => {
   if (!rendition) return;
-
-  rendition.themes.register("light", {
-    body: { color: "#000", background: "#fff" },
-  });
-
-  rendition.themes.register("dark", {
-    body: { color: "#fff", background: "#000" },
-  });
-
+  // SOLO selecciona el tema, no registres aquí
   rendition.themes.select(theme);
 };

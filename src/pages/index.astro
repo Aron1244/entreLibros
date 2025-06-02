@@ -1,11 +1,12 @@
 ---
 // src/pages/index.astro
 import Layout from "../layouts/Layout.astro";
-import HeroSection from "../components/HeroSection.tsx";
-import BookCarousel from "../components/BookCarouselTailwind.tsx";
-import CategoryGrid from "../components/CategoryGrid.tsx";
-import Testimonials from "../components/Testimonials.tsx";
-import Newsletter from "../components/Newsletter.tsx";
+import HeroSection from "../components/HeroSection";
+import BookCarousel from "../components/BookCarouselTailwind";
+import CategoryGrid from "../components/CategoryGrid";
+import Testimonials from "../components/Testimonials";
+import Newsletter from "../components/Newsletter";
+import GoToTestReader from "../components/GoToTestReader.astro";
 ---
 
 <Layout title="EntreLibros - Tu librería online favorita">
@@ -13,6 +14,7 @@ import Newsletter from "../components/Newsletter.tsx";
     <!-- Hero Section -->
     <HeroSection />
 
+    <GoToTestReader />
     <!-- Featured Books Carousel -->
     <section class="py-12 px-4 sm:px-6 lg:px-8">
       <div class="max-w-7xl mx-auto">

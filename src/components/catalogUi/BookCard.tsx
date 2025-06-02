@@ -1,5 +1,3 @@
-import React from "react";
-
 type Libro = {
   id: number;
   titulo: string;
