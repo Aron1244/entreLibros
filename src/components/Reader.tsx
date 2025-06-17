@@ -1,6 +1,10 @@
 // Agrega estas importaciones si no las tienes ya
 import { useEffect, useRef, useState } from "react";
 import ePub, { Book, Rendition } from "epubjs";
+import EpubToolbar from "./readerUi/EpubToolbar";
+import ChapterSidebar from "./readerUi/ChapterSidebar";
+import MarksSidebar from "./readerUi/MarksSidebar";
+import CustomThemeModal from "./readerUi/CustomThemeModal";
 
 type ITheme = "light" | "dark";
 
@@ -16,12 +20,19 @@ interface TocItem {
 }
 
 export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
+  // Leer el tema guardado en localStorage (si existe)
+  let storedTheme: ITheme | null = null;
+  if (typeof window !== "undefined") {
+    storedTheme = (localStorage.getItem("epubTheme") as ITheme) || null;
+  }
+
   const viewerRef = useRef<HTMLDivElement>(null);
   const renditionRef = useRef<Rendition | null>(null);
   const bookRef = useRef<Book | null>(null);
 
   const [location, setLocation] = useState<string | number>(0);
-  const [theme, setTheme] = useState<ITheme>(initialTheme);
+  // Usar el tema guardado o el initialTheme
+  const [theme, setTheme] = useState<ITheme>(storedTheme || initialTheme);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [toc, setToc] = useState<TocItem[]>([]);
@@ -33,6 +44,12 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
   const [customBgColor, setCustomBgColor] = useState("#222222");
   const [customTextColor, setCustomTextColor] = useState("#ffffff");
   const [customThemeApplied, setCustomThemeApplied] = useState(false);
+  const [marks, setMarks] = useState<{ cfi: string; name: string }[]>([]);
+  const [marksSidebarOpen, setMarksSidebarOpen] = useState(false);
+  const [newMarkName, setNewMarkName] = useState("");
+  const [columns, setColumns] = useState(1);
+  const [columnBarOpen, setColumnBarOpen] = useState(false);
+  const [toolbarVisible, setToolbarVisible] = useState(true);
 
   // Mantener referencia de los colores previos para evitar registrar el mismo tema repetidamente
   const prevCustomColors = useRef({ bg: customBgColor, text: customTextColor });
@@ -78,14 +95,14 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
     // Se registra sin acceder a propiedades privadas
     try {
       rendition.themes.register("light", {
-        body: { color: "#000", background: "#fff" },
-        "*": { color: "#000 !important", background: "#fff !important" },
+        body: { color: "#2E2E2E", background: "#FAF9F6" },
+        "*": { color: "#2E2E2E !important", background: "#FAF9F6 !important" },
       });
     } catch (e) {}
     try {
       rendition.themes.register("dark", {
-        body: { color: "#fff", background: "#000" },
-        "*": { color: "#fff !important", background: "#000 !important" },
+        body: { color: "#E5E5E5", background: "#1E1E1E" },
+        "*": { color: "#E5E5E5 !important", background: "#1E1E1E !important" },
       });
     } catch (e) {}
 
@@ -129,13 +146,43 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
     }
   }, [fontSize]);
 
+  // Aplica columnas solo en escritorio y siempre que se renderice una página
+  useEffect(() => {
+    let isMounted = true;
+    const applyColumns = () => {
+      if (!isMounted || !renditionRef.current || !bookRef.current) return;
+      if (window.matchMedia("(min-width: 640px)").matches) {
+        renditionRef.current.themes.override(
+          "body",
+          `column-count: ${columns} !important; -webkit-column-count: ${columns} !important; column-gap: ${
+            columns > 1 ? "2em" : "0"
+          } !important;`
+        );
+      } else {
+        renditionRef.current.themes.override("body", "");
+      }
+    };
+    applyColumns();
+    window.addEventListener("resize", applyColumns);
+    // Aplica override en cada renderizado de página
+    const rendition = renditionRef.current;
+    if (rendition) {
+      rendition.on("rendered", applyColumns);
+    }
+    return () => {
+      isMounted = false;
+      window.removeEventListener("resize", applyColumns);
+      if (rendition) rendition.off("rendered", applyColumns);
+    };
+  }, [columns, location]);
+
   const goTo = (href: string) => {
     if (!renditionRef.current || !bookRef.current) return;
 
     // Encuentra la sección del spine cuyo href termina con el href recibido
     const spine = bookRef.current.spine;
 
-    let section: { href: string } | null = null;
+    let section: any = null;
     spine.each((item: { href: string }) => {
       if (item.href.endsWith(href)) {
         section = item;
@@ -150,7 +197,7 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
     }
 
     renditionRef.current
-      .display(section.href)
+      .display(section?.href)
       .then(() => setSidebarOpen(false))
       .catch((err) => {
         console.error("Error navegando a sección:", href, err);
@@ -285,254 +332,189 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
     return () => clearTimeout(timer);
   }, [location]);
 
+  // Guardar marcas en localStorage por libro
+  useEffect(() => {
+    if (!url) return;
+    const saved = localStorage.getItem(`marks_${url}`);
+    if (saved) setMarks(JSON.parse(saved));
+  }, [url]);
+  useEffect(() => {
+    if (!url) return;
+    localStorage.setItem(`marks_${url}`, JSON.stringify(marks));
+  }, [marks, url]);
+
+  const addMark = () => {
+    if (!location || !renditionRef.current) return;
+    if (!newMarkName.trim()) return;
+    setMarks((prev) => [
+      ...prev,
+      { cfi: String(location), name: newMarkName.trim() },
+    ]);
+    setNewMarkName("");
+  };
+  const goToMark = (cfi: string) => {
+    renditionRef.current?.display(cfi);
+    setMarksSidebarOpen(false);
+  };
+  const deleteMark = (idx: number) => {
+    setMarks((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  // Debounce y control de tap para navegación táctil
+  const navDebounceRef = useRef(false);
+  const touchStartX = useRef<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent, side: "left" | "right") => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = (e: React.TouchEvent, side: "left" | "right") => {
+    if (navDebounceRef.current) return;
+    const startX = touchStartX.current;
+    const endX = e.changedTouches[0].clientX;
+    // Solo si el tap fue casi en el mismo lugar (no swipe)
+    if (startX !== null && Math.abs(endX - startX) < 20) {
+      navDebounceRef.current = true;
+      if (side === "left") goPrev();
+      else goNext();
+      setTimeout(() => {
+        navDebounceRef.current = false;
+      }, 350);
+    }
+    touchStartX.current = null;
+  };
+
   return (
     <div className="pt-20 bg-primary-dark">
-      {/* Barra superior */}
-      <div className="flex flex-wrap gap-2 sm:gap-4 mb-4 justify-center relative">
-        {/* Botón Tema */}
-        <div className="relative min-w-[120px] flex-1 sm:flex-none">
-          <button
-            className="w-full px-4 py-2 rounded bg-primary text-primary-light border border-primary-dark transition duration-300 hover:scale-105 hover:bg-opacity-80 text-sm sm:text-base"
-            onClick={toggleThemeDropdown}
+      <div className="relative w-full">
+        {/* Botón flotante para mostrar la barra si está oculta */}
+        {!toolbarVisible && (
+          <div
+            className="absolute top-2 right-2 z-50 group"
+            style={{ pointerEvents: 'auto' }}
           >
-            Tema
-          </button>
-          {dropdownOpen && (
-            <div className="absolute left-0 mt-2 w-40 bg-secondary-light rounded shadow-lg border border-primary-dark z-30">
-              <button
-                onClick={() => {
-                  setTheme("light");
-                  setDropdownOpen(false);
-                  setCustomThemeApplied(false);
-                }}
-                className={`block w-full px-4 py-2 hover:bg-primary-light text-sm sm:text-base ${
-                  theme === "light" && !customThemeApplied
-                    ? "font-bold underline"
-                    : ""
-                }`}
-              >
-                Tema Claro
-              </button>
-              <button
-                onClick={() => {
-                  setTheme("dark");
-                  setDropdownOpen(false);
-                  setCustomThemeApplied(false);
-                }}
-                className={`block w-full px-4 py-2 hover:bg-primary-light text-sm sm:text-base ${
-                  theme === "dark" && !customThemeApplied
-                    ? "font-bold underline"
-                    : ""
-                }`}
-              >
-                Tema Oscuro
-              </button>
-              <button
-                onClick={() => {
-                  setCustomThemeModalOpen(true);
-                  setDropdownOpen(false);
-                }}
-                className={`block w-full px-4 py-2 hover:bg-primary-light text-sm sm:text-base ${
-                  customThemeApplied
-                    ? "font-bold underline bg-primary-light text-primary"
-                    : ""
-                }`}
-              >
-                Personalizado
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Botón Fuente */}
-        <div className="relative min-w-[120px] flex-1 sm:flex-none">
-          <button
-            className="w-full px-4 py-2 rounded bg-primary text-primary-light border border-primary-dark transition duration-300 hover:scale-105 hover:bg-opacity-80 text-sm sm:text-base"
-            onClick={toggleFontDropdown}
-          >
-            Fuente
-          </button>
-          {fontDropdownOpen && (
-            <div className="absolute left-0 mt-2 w-40 bg-secondary-light rounded shadow-lg border border-primary-dark z-30">
-              <button
-                onClick={() => {
-                  setFont("serif");
-                  setFontDropdownOpen(false);
-                }}
-                className={`block w-full px-4 py-2 hover:bg-primary-light text-sm sm:text-base ${
-                  font === "serif" ? "font-bold underline" : ""
-                }`}
-              >
-                Serif
-              </button>
-              <button
-                onClick={() => {
-                  setFont("sans");
-                  setFontDropdownOpen(false);
-                }}
-                className={`block w-full px-4 py-2 hover:bg-primary-light text-sm sm:text-base ${
-                  font === "sans" ? "font-bold underline" : ""
-                }`}
-              >
-                Sans
-              </button>
-              <button
-                onClick={() => {
-                  setFont("monospace");
-                  setFontDropdownOpen(false);
-                }}
-                className={`block w-full px-4 py-2 hover:bg-primary-light text-sm sm:text-base ${
-                  font === "monospace" ? "font-bold underline" : ""
-                }`}
-              >
-                Monospace
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Botón Tamaño */}
-        <div className="relative min-w-[120px] flex-1 sm:flex-none">
-          <button
-            className="w-full px-4 py-2 rounded bg-primary text-primary-light border border-primary-dark transition duration-300 hover:scale-105 hover:bg-opacity-80 text-sm sm:text-base"
-            onClick={toggleFontSizeBar}
-          >
-            Tamaño
-          </button>
-          {fontSizeBarOpen && (
-            <div className="absolute left-0 mt-2 w-64 bg-secondary-light rounded shadow-lg border border-primary-dark z-30 p-4">
-              <input
-                type="range"
-                min="0.5"
-                max="1.5"
-                step="0.1"
-                value={fontSize}
-                onChange={(e) => setFontSize(parseFloat(e.target.value))}
-                className="w-full"
-              />
-            </div>
-          )}
-        </div>
-
-        {/* Botón Capítulos */}
-        <div className="min-w-[120px] flex-1 sm:flex-none">
-          <button
-            className="w-full px-4 py-2 rounded bg-primary text-primary-light border border-primary-dark transition duration-300 hover:scale-105 hover:bg-opacity-80 text-sm sm:text-base"
-            onClick={toggleSidebar}
-          >
-            Capítulos
-          </button>
-        </div>
+            <button
+              className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-primary text-primary-light p-2 rounded-full shadow-lg border border-primary-dark hover:scale-105"
+              onClick={() => setToolbarVisible(true)}
+              title="Mostrar menú"
+            >
+              <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 4H4m0 0v4m0-4 5 5m7-5h4m0 0v4m0-4-5 5M8 20H4m0 0v-4m0 4 5-5m7 5h4m0 0v-4m0 4-5-5"/>
+              </svg>
+            </button>
+          </div>
+        )}
       </div>
-
+      {/* Barra de herramientas plegable */}
+      {toolbarVisible && (
+        <EpubToolbar
+          theme={theme}
+          onThemeChange={(t) => {
+            setTheme(t);
+            setCustomThemeApplied(false);
+            setDropdownOpen(false);
+          }}
+          customThemeApplied={customThemeApplied}
+          onOpenCustomThemeModal={() => {
+            setCustomThemeModalOpen(true);
+            setDropdownOpen(false);
+          }}
+          font={font}
+          onFontChange={(f) => {
+            setFont(f);
+            setFontDropdownOpen(false);
+          }}
+          fontSize={fontSize}
+          onFontSizeChange={setFontSize}
+          columns={columns}
+          onColumnsChange={setColumns}
+          onOpenSidebar={toggleSidebar}
+          onOpenMarksSidebar={() => setMarksSidebarOpen((v) => !v)}
+          dropdownOpen={dropdownOpen}
+          onToggleThemeDropdown={toggleThemeDropdown}
+          fontDropdownOpen={fontDropdownOpen}
+          onToggleFontDropdown={toggleFontDropdown}
+          fontSizeBarOpen={fontSizeBarOpen}
+          onToggleFontSizeBar={toggleFontSizeBar}
+          columnBarOpen={columnBarOpen}
+          onToggleColumnBar={() => setColumnBarOpen((v) => !v)}
+          onCollapseToolbar={() => setToolbarVisible(false)}
+        />
+      )}
       {/* Contenedor principal con panel lateral */}
       <div className="relative w-full h-screen border rounded shadow overflow-hidden flex">
         {/* Sidebar de capítulos */}
-        {sidebarOpen && (
-          <div className="absolute left-0 top-0 z-20 h-full w-64 bg-white text-black shadow-xl overflow-y-auto">
-            <div className="flex justify-between items-center p-4 border-b">
-              <h2 className="font-bold text-lg">Capítulos</h2>
-              <button onClick={() => setSidebarOpen(false)} className="text-xl">
-                ×
-              </button>
-            </div>
-            <ul>
-              {toc.map((item, idx) => (
-                <li
-                  key={idx}
-                  className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
-                  onClick={() => goTo(item.href)}
-                  title={item.href} // Muestra href al pasar el mouse
-                >
-                  {item.label}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+        <ChapterSidebar
+          toc={toc}
+          open={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+          onGoTo={goTo}
+        />
 
-        {/* Overlay blur */}
-        {sidebarOpen && (
+        {/* Sidebar de marcas personalizadas */}
+        <MarksSidebar
+          open={marksSidebarOpen}
+          marks={marks}
+          newMarkName={newMarkName}
+          onClose={() => setMarksSidebarOpen(false)}
+          onAddMark={addMark}
+          onGoToMark={goToMark}
+          onDeleteMark={deleteMark}
+          onNewMarkNameChange={setNewMarkName}
+        />
+
+        {/* Overlay blur para ambos sidebars */}
+        {(sidebarOpen || marksSidebarOpen) && (
           <div
-            className="absolute inset-0 z-10 backdrop-blur-sm bg-black/10 transition duration-300"
-            onClick={() => setSidebarOpen(false)}
+            className="fixed inset-0 z-20 backdrop-blur-sm bg-black/10 transition duration-300 sm:absolute"
+            onClick={() => {
+              setSidebarOpen(false);
+              setMarksSidebarOpen(false);
+            }}
           />
         )}
 
-        {/* Zonas invisibles para navegación */}
+        {/* Zonas invisibles para navegación: 20% en móvil, 1/6 en escritorio, centro libre */}
         <div
-          className={`absolute left-0 top-0 h-full w-1/6 z-20${
-            sidebarOpen ? " pointer-events-none" : ""
-          }`}
-          onClick={sidebarOpen ? undefined : goPrev}
+          className="absolute left-0 top-0 h-full w-1/5 sm:w-1/6 z-20"
+          style={{ pointerEvents: "auto" }}
+          onClick={sidebarOpen || marksSidebarOpen ? undefined : goPrev}
+          onTouchStart={(e) => handleTouchStart(e, "left")}
+          onTouchEnd={
+            sidebarOpen || marksSidebarOpen
+              ? undefined
+              : (e) => handleTouchEnd(e, "left")
+          }
         />
         <div
-          className={`absolute right-0 top-0 h-full w-1/6 z-20${
-            sidebarOpen ? " pointer-events-none" : ""
-          }`}
-          onClick={sidebarOpen ? undefined : goNext}
+          className="absolute right-0 top-0 h-full w-1/5 sm:w-1/6 z-20"
+          style={{ pointerEvents: "auto" }}
+          onClick={sidebarOpen || marksSidebarOpen ? undefined : goNext}
+          onTouchStart={(e) => handleTouchStart(e, "right")}
+          onTouchEnd={
+            sidebarOpen || marksSidebarOpen
+              ? undefined
+              : (e) => handleTouchEnd(e, "right")
+          }
         />
+        {/* Zona central sin eventos para evitar conflictos */}
+        <div className="absolute left-1/5 sm:left-1/6 top-0 h-full w-3/5 sm:w-2/3 z-10 pointer-events-none" />
 
         {/* Lector EPUB */}
         <div ref={viewerRef} className="w-full h-full relative z-0" />
       </div>
 
-      {/* Modal de tema personalizado */}
-      {customThemeModalOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/10"
-          onClick={() => setCustomThemeModalOpen(false)}
-        >
-          <div
-            className="bg-white rounded-lg shadow-lg p-8 min-w-[320px] relative"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 className="text-lg font-bold mb-4">Tema Personalizado</h2>
-            <div className="mb-4">
-              <label className="block mb-1 font-semibold">Color de fondo</label>
-              <input
-                type="color"
-                value={customBgColor}
-                onChange={(e) => setCustomBgColor(e.target.value)}
-                className="w-12 h-12 border-2 border-gray-300 rounded-full cursor-pointer"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block mb-1 font-semibold">Color de texto</label>
-              <input
-                type="color"
-                value={customTextColor}
-                onChange={(e) => setCustomTextColor(e.target.value)}
-                className="w-12 h-12 border-2 border-gray-300 rounded-full cursor-pointer"
-              />
-            </div>
-            <div className="flex gap-4 justify-end mt-6">
-              <button
-                className="px-4 py-2 rounded bg-gray-300 text-gray-800 hover:bg-gray-400"
-                onClick={() => setCustomThemeModalOpen(false)}
-              >
-                Cancelar
-              </button>
-              <button
-                className="px-4 py-2 rounded bg-primary text-primary-light hover:bg-primary-dark"
-                onClick={() => {
-                  setCustomThemeApplied(true);
-                  setCustomThemeModalOpen(false);
-                }}
-              >
-                Aplicar
-              </button>
-            </div>
-            <button
-              className="absolute top-2 right-3 text-2xl text-gray-500 hover:text-gray-800"
-              onClick={() => setCustomThemeModalOpen(false)}
-              title="Cerrar"
-            >
-              ×
-            </button>
-          </div>
-        </div>
-      )}
+      <CustomThemeModal
+        open={customThemeModalOpen}
+        onClose={() => setCustomThemeModalOpen(false)}
+        customBgColor={customBgColor}
+        customTextColor={customTextColor}
+        onBgColorChange={setCustomBgColor}
+        onTextColorChange={setCustomTextColor}
+        onApply={() => {
+          setCustomThemeApplied(true);
+          setCustomThemeModalOpen(false);
+        }}
+      />
     </div>
   );
 };
