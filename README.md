@@ -33,7 +33,20 @@ git clone https://github.com/Aron1244/entreLibros.git
 cd entreLibros
 
 # Instala dependencias
+
 npm install
 
 # Ejecuta el servidor
 npm run dev
+```
+
+## 📸 Capturas
+
+### 🏠 Página principal
+
+<img src="./docs/indexPresentation.png" alt="Página principal de EntreLibros" width="800" />
+
+
+### 📚 Catálogo de libros
+
+<img src="./docs/catalogPresentation.png" alt="Catálogo de libros" width="800" />
