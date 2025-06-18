@@ -76,7 +76,7 @@ const Navbar = () => {
 
       <nav
         className={`fixed w-full z-50 transition-all duration-300 ${
-          scrolled ? "bg-primary shadow-md py-2" : "bg-transparent py-4"
+          scrolled ? "bg-primary shadow-md py-2" : "bg-primary-dark py-4"
         } ${collapsed ? "-translate-y-full" : "translate-y-0"}`}
       >
         <div className="container mx-auto px-4">
@@ -202,6 +202,11 @@ const Navbar = () => {
           </div>
         </div>
       </nav>
+      {/* Espaciador para que el contenido no quede debajo del navbar */}
+      <div
+        aria-hidden="true"
+        className={`${scrolled ? "h-14" : "h-20"} bg-primary-dark`}
+      ></div>
     </>
   );
 };

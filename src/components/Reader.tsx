@@ -5,6 +5,7 @@ import EpubToolbar from "./readerUi/EpubToolbar";
 import ChapterSidebar from "./readerUi/ChapterSidebar";
 import MarksSidebar from "./readerUi/MarksSidebar";
 import CustomThemeModal from "./readerUi/CustomThemeModal";
+import EpubSkeleton from "./readerUi/EpubSkeleton";
 
 type ITheme = "light" | "dark";
 
@@ -50,6 +51,8 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
   const [columns, setColumns] = useState(1);
   const [columnBarOpen, setColumnBarOpen] = useState(false);
   const [toolbarVisible, setToolbarVisible] = useState(true);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // Mantener referencia de los colores previos para evitar registrar el mismo tema repetidamente
   const prevCustomColors = useRef({ bg: customBgColor, text: customTextColor });
@@ -106,7 +109,7 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
       });
     } catch (e) {}
 
-    rendition.display(String(location));
+    rendition.display(String(location)).then(() => setLoading(false));
 
     rendition.on("relocated", (location: { start: { cfi: any } }) => {
       setLocation(location?.start?.cfi || "0");
@@ -386,62 +389,62 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
   return (
     <div className="pt-20 bg-primary-dark">
       <div className="relative w-full">
-        {/* Botón flotante para mostrar la barra si está oculta */}
-        {!toolbarVisible && (
-          <div
-            className="absolute top-2 right-2 z-50 group"
-            style={{ pointerEvents: 'auto' }}
-          >
-            <button
-              className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-primary text-primary-light p-2 rounded-full shadow-lg border border-primary-dark hover:scale-105"
-              onClick={() => setToolbarVisible(true)}
-              title="Mostrar menú"
-            >
-              <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 4H4m0 0v4m0-4 5 5m7-5h4m0 0v4m0-4-5 5M8 20H4m0 0v-4m0 4 5-5m7 5h4m0 0v-4m0 4-5-5"/>
-              </svg>
-            </button>
-          </div>
-        )}
+        {/* Botón flotante para mostrar el menú drawer */}
+        {/* <button
+          className="fixed top-24 right-6 z-50 bg-primary text-primary-light p-3 rounded-full shadow-lg hover:scale-110 transition-transform opacity-60 hover:opacity-100 transition"
+          onClick={() => setDrawerOpen(true)}
+          title="Abrir menú"
+        >
+          <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button> */}
       </div>
-      {/* Barra de herramientas plegable */}
-      {toolbarVisible && (
-        <EpubToolbar
-          theme={theme}
-          onThemeChange={(t) => {
-            setTheme(t);
-            setCustomThemeApplied(false);
-            setDropdownOpen(false);
-          }}
-          customThemeApplied={customThemeApplied}
-          onOpenCustomThemeModal={() => {
-            setCustomThemeModalOpen(true);
-            setDropdownOpen(false);
-          }}
-          font={font}
-          onFontChange={(f) => {
-            setFont(f);
-            setFontDropdownOpen(false);
-          }}
-          fontSize={fontSize}
-          onFontSizeChange={setFontSize}
-          columns={columns}
-          onColumnsChange={setColumns}
-          onOpenSidebar={toggleSidebar}
-          onOpenMarksSidebar={() => setMarksSidebarOpen((v) => !v)}
-          dropdownOpen={dropdownOpen}
-          onToggleThemeDropdown={toggleThemeDropdown}
-          fontDropdownOpen={fontDropdownOpen}
-          onToggleFontDropdown={toggleFontDropdown}
-          fontSizeBarOpen={fontSizeBarOpen}
-          onToggleFontSizeBar={toggleFontSizeBar}
-          columnBarOpen={columnBarOpen}
-          onToggleColumnBar={() => setColumnBarOpen((v) => !v)}
-          onCollapseToolbar={() => setToolbarVisible(false)}
-        />
-      )}
-      {/* Contenedor principal con panel lateral */}
       <div className="relative w-full h-screen border rounded shadow overflow-hidden flex">
+        {/* Botón flotante para mostrar el menú drawer (ahora dentro del visor) */}
+        {!drawerOpen && (
+          <button
+            className="absolute top-6 right-6 z-50 bg-primary text-primary-light p-3 rounded-full shadow-lg hover:scale-110 opacity-60 hover:opacity-100 transition"
+            onClick={() => setDrawerOpen(true)}
+            title="Abrir menú"
+          >
+            <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+        )}
+        {/* Drawer lateral derecho dentro del visor */}
+        <div className={`absolute top-0 right-0 h-full w-72 max-w-full z-40 bg-secondary-light shadow-2xl transform transition-transform duration-300 ${drawerOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+          <EpubToolbar
+            theme={theme}
+            onThemeChange={(t) => {
+              setTheme(t);
+              setCustomThemeApplied(false);
+              setDropdownOpen(false);
+            }}
+            customThemeApplied={customThemeApplied}
+            onOpenCustomThemeModal={() => {
+              setCustomThemeModalOpen(true);
+              setDropdownOpen(false);
+            }}
+            font={font}
+            onFontChange={(f) => {
+              setFont(f);
+              setFontDropdownOpen(false);
+            }}
+            fontSize={fontSize}
+            onFontSizeChange={setFontSize}
+            columns={columns}
+            onColumnsChange={setColumns}
+            onOpenSidebar={toggleSidebar}
+            onOpenMarksSidebar={() => setMarksSidebarOpen((v) => !v)}
+            dropdownOpen={dropdownOpen}
+            onToggleThemeDropdown={toggleThemeDropdown}
+            fontDropdownOpen={fontDropdownOpen}
+            onToggleFontDropdown={toggleFontDropdown}
+            fontSizeBarOpen={fontSizeBarOpen}
+            onToggleFontSizeBar={toggleFontSizeBar}
+            columnBarOpen={columnBarOpen}
+            onToggleColumnBar={() => setColumnBarOpen((v) => !v)}
+            onCollapseToolbar={() => setDrawerOpen(false)}
+          />
+        </div>
         {/* Sidebar de capítulos */}
         <ChapterSidebar
           toc={toc}
@@ -449,7 +452,6 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
           onClose={() => setSidebarOpen(false)}
           onGoTo={goTo}
         />
-
         {/* Sidebar de marcas personalizadas */}
         <MarksSidebar
           open={marksSidebarOpen}
@@ -461,7 +463,6 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
           onDeleteMark={deleteMark}
           onNewMarkNameChange={setNewMarkName}
         />
-
         {/* Overlay blur para ambos sidebars */}
         {(sidebarOpen || marksSidebarOpen) && (
           <div
@@ -472,7 +473,6 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
             }}
           />
         )}
-
         {/* Zonas invisibles para navegación: 20% en móvil, 1/6 en escritorio, centro libre */}
         <div
           className="absolute left-0 top-0 h-full w-1/5 sm:w-1/6 z-20"
@@ -498,9 +498,14 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
         />
         {/* Zona central sin eventos para evitar conflictos */}
         <div className="absolute left-1/5 sm:left-1/6 top-0 h-full w-3/5 sm:w-2/3 z-10 pointer-events-none" />
-
         {/* Lector EPUB */}
-        <div ref={viewerRef} className="w-full h-full relative z-0" />
+        <div ref={viewerRef} className="w-full h-full relative z-0">
+          {loading && (
+            <div className="absolute inset-0 w-full h-full">
+              <EpubSkeleton />
+            </div>
+          )}
+        </div>
       </div>
 
       <CustomThemeModal

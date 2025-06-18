@@ -36,6 +36,9 @@ const newsItems = [
     <div class="relative bg-gradient-to-br from-primary-dark to-secondary py-20 md:py-28">
       <div class="absolute inset-0 overflow-hidden">
         <div class="absolute w-full h-full bg-[url('https://images.pexels.com/photos/694740/pexels-photo-694740.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')] opacity-10 bg-cover bg-center"></div>
+        <!-- Gradiente para difuminar la imagen de fondo solo en la parte inferior -->
+        <div class="absolute w-full h-full pointer-events-none bg-gradient-to-b from-transparent via-transparent to-primary-dark fade-bottom-gradient"></div>
+        <!-- Gradiente superior existente para oscurecer arriba -->
         <div class="absolute inset-0 bg-gradient-to-t from-secondary-dark/80 to-transparent"></div>
       </div>
       
@@ -147,5 +150,11 @@ const newsItems = [
   .animate-fade-in {
     animation: fadeIn 0.6s ease-out forwards;
     opacity: 0;
+  }
+
+  /* Gradiente personalizado para un difuminado más largo en la parte inferior */
+  .fade-bottom-gradient {
+    mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
   }
 </style>
