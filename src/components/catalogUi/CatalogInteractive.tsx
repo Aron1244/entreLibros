@@ -199,7 +199,7 @@ export default function CatalogoInteractivo() {
       <div className="max-w-7xl mx-auto mt-10">
         {/* Header */}
         <div className="text-center mb-10">
-          <h1 className="text-4xl font-bold text-primary mb-3">
+          <h1 className="text-4xl font-bold text-primary mb-3 animate-fade-in">
             Nuestra Biblioteca
           </h1>
           <p className="text-lg text-primary-light max-w-2xl mx-auto">
@@ -263,6 +263,25 @@ export default function CatalogoInteractivo() {
       {toast.visible && (
         <Toast message={toast.message} type={toast.type} onClose={closeToast} />
       )}
+
+      <style>
+        {`
+          @keyframes fadeIn {
+            from {
+              opacity: 0;
+              transform: translateY(20px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          .animate-fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+            opacity: 0;
+          }
+        `}
+      </style>
     </div>
   );
 }

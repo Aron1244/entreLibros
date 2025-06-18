@@ -51,45 +51,40 @@ const EpubToolbar: React.FC<EpubToolbarProps> = ({
   onToggleColumnBar,
   onCollapseToolbar,
 }) => (
-  <div className="flex flex-wrap gap-2 sm:gap-4 mb-4 justify-center relative">
-    {/* Botón para plegar la barra */}
+  <div className="flex flex-col gap-4 p-6">
+    {/* Botón para cerrar el menú */}
     <button
-      className="absolute right-2 top-2 z-40 bg-secondary-light border border-primary-dark rounded-full p-1 hover:bg-primary-light transition"
+      className="self-end mb-2 bg-primary text-primary-light rounded-full p-2 shadow-lg hover:bg-primary-dark hover:scale-110 transition"
       onClick={onCollapseToolbar}
-      title="Plegar menú"
+      title="Cerrar menú"
     >
       <svg
-        className="w-6 h-6 text-gray-800 dark:text-white"
-        aria-hidden="true"
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
+        className="w-6 h-6"
         fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
         viewBox="0 0 24 24"
       >
         <path
-          stroke="currentColor"
           strokeLinecap="round"
           strokeLinejoin="round"
-          strokeWidth="2"
-          d="M4 8h4V4m12 4h-4V4M4 16h4v4m12-4h-4v4"
+          d="M6 18L18 6M6 6l12 12"
         />
       </svg>
     </button>
-
     {/* Botón Tema */}
-    <div className="relative min-w-[120px] flex-1 sm:flex-none">
+    <div className="relative">
       <button
-        className="w-full px-4 py-2 rounded bg-primary text-primary-light border border-primary-dark transition duration-300 hover:scale-105 hover:bg-opacity-80 text-sm sm:text-base"
+        className="w-full py-3 rounded-xl bg-primary text-primary-light shadow-md hover:bg-primary-dark hover:scale-105 transition text-base font-semibold"
         onClick={onToggleThemeDropdown}
       >
         Tema
       </button>
       {dropdownOpen && (
-        <div className="absolute left-0 mt-2 w-40 bg-secondary-light rounded shadow-lg border border-primary-dark z-30">
+        <div className="absolute right-0 mt-2 w-44 bg-secondary-light rounded-xl shadow-lg z-30 flex flex-col">
           <button
             onClick={() => onThemeChange("light")}
-            className={`block w-full px-4 py-2 hover:bg-primary-light text-sm sm:text-base ${
+            className={`py-2 px-4 text-left hover:bg-primary-light hover:text-primary rounded-xl transition ${
               theme === "light" && !customThemeApplied ? "font-bold underline" : ""
             }`}
           >
@@ -97,7 +92,7 @@ const EpubToolbar: React.FC<EpubToolbarProps> = ({
           </button>
           <button
             onClick={() => onThemeChange("dark")}
-            className={`block w-full px-4 py-2 hover:bg-primary-light text-sm sm:text-base ${
+            className={`py-2 px-4 text-left hover:bg-primary-light hover:text-primary rounded-xl transition ${
               theme === "dark" && !customThemeApplied ? "font-bold underline" : ""
             }`}
           >
@@ -105,7 +100,7 @@ const EpubToolbar: React.FC<EpubToolbarProps> = ({
           </button>
           <button
             onClick={onOpenCustomThemeModal}
-            className={`block w-full px-4 py-2 hover:bg-primary-light text-sm sm:text-base ${
+            className={`py-2 px-4 text-left hover:bg-primary-light hover:text-primary rounded-xl transition ${
               customThemeApplied ? "font-bold underline bg-primary-light text-primary" : ""
             }`}
           >
@@ -114,20 +109,19 @@ const EpubToolbar: React.FC<EpubToolbarProps> = ({
         </div>
       )}
     </div>
-
     {/* Botón Fuente */}
-    <div className="relative min-w-[120px] flex-1 sm:flex-none">
+    <div className="relative">
       <button
-        className="w-full px-4 py-2 rounded bg-primary text-primary-light border border-primary-dark transition duration-300 hover:scale-105 hover:bg-opacity-80 text-sm sm:text-base"
+        className="w-full py-3 rounded-xl bg-primary text-primary-light shadow-md hover:bg-primary-dark hover:scale-105 transition text-base font-semibold"
         onClick={onToggleFontDropdown}
       >
         Fuente
       </button>
       {fontDropdownOpen && (
-        <div className="absolute left-0 mt-2 w-40 bg-secondary-light rounded shadow-lg border border-primary-dark z-30">
+        <div className="absolute right-0 mt-2 w-44 bg-secondary-light rounded-xl shadow-lg z-30 flex flex-col">
           <button
             onClick={() => onFontChange("serif")}
-            className={`block w-full px-4 py-2 hover:bg-primary-light text-sm sm:text-base ${
+            className={`py-2 px-4 text-left hover:bg-primary-light hover:text-primary rounded-xl transition ${
               font === "serif" ? "font-bold underline" : ""
             }`}
           >
@@ -135,7 +129,7 @@ const EpubToolbar: React.FC<EpubToolbarProps> = ({
           </button>
           <button
             onClick={() => onFontChange("sans")}
-            className={`block w-full px-4 py-2 hover:bg-primary-light text-sm sm:text-base ${
+            className={`py-2 px-4 text-left hover:bg-primary-light hover:text-primary rounded-xl transition ${
               font === "sans" ? "font-bold underline" : ""
             }`}
           >
@@ -143,7 +137,7 @@ const EpubToolbar: React.FC<EpubToolbarProps> = ({
           </button>
           <button
             onClick={() => onFontChange("monospace")}
-            className={`block w-full px-4 py-2 hover:bg-primary-light text-sm sm:text-base ${
+            className={`py-2 px-4 text-left hover:bg-primary-light hover:text-primary rounded-xl transition ${
               font === "monospace" ? "font-bold underline" : ""
             }`}
           >
@@ -152,17 +146,16 @@ const EpubToolbar: React.FC<EpubToolbarProps> = ({
         </div>
       )}
     </div>
-
     {/* Botón Tamaño */}
-    <div className="relative min-w-[120px] flex-1 sm:flex-none">
+    <div className="relative">
       <button
-        className="w-full px-4 py-2 rounded bg-primary text-primary-light border border-primary-dark transition duration-300 hover:scale-105 hover:bg-opacity-80 text-sm sm:text-base"
+        className="w-full py-3 rounded-xl bg-primary text-primary-light shadow-md hover:bg-primary-dark hover:scale-105 transition text-base font-semibold"
         onClick={onToggleFontSizeBar}
       >
         Tamaño
       </button>
       {fontSizeBarOpen && (
-        <div className="absolute left-0 mt-2 w-64 bg-secondary-light rounded shadow-lg border border-primary-dark z-30 p-4">
+        <div className="absolute right-0 mt-2 w-60 bg-secondary-light rounded-xl shadow-lg z-30 p-4">
           <input
             type="range"
             min="0.5"
@@ -170,41 +163,35 @@ const EpubToolbar: React.FC<EpubToolbarProps> = ({
             step="0.1"
             value={fontSize}
             onChange={(e) => onFontSizeChange(parseFloat(e.target.value))}
-            className="w-full"
+            className="w-full accent-primary"
           />
         </div>
       )}
     </div>
-
     {/* Botón Capítulos */}
-    <div className="min-w-[120px] flex-1 sm:flex-none">
-      <button
-        className="w-full px-4 py-2 rounded bg-primary text-primary-light border border-primary-dark transition duration-300 hover:scale-105 hover:bg-opacity-80 text-sm sm:text-base"
-        onClick={onOpenSidebar}
-      >
-        Capítulos
-      </button>
-    </div>
+    <button
+      className="w-full py-3 rounded-xl bg-primary text-primary-light shadow-md hover:bg-primary-dark hover:scale-105 transition text-base font-semibold"
+      onClick={onOpenSidebar}
+    >
+      Capítulos
+    </button>
     {/* Botón Marcas */}
-    <div className="min-w-[120px] flex-1 sm:flex-none">
-      <button
-        className="w-full px-4 py-2 rounded bg-primary text-primary-light border border-primary-dark transition duration-300 hover:scale-105 hover:bg-opacity-80 text-sm sm:text-base"
-        onClick={onOpenMarksSidebar}
-      >
-        Marcas
-      </button>
-    </div>
-
+    <button
+      className="w-full py-3 rounded-xl bg-primary text-primary-light shadow-md hover:bg-primary-dark hover:scale-105 transition text-base font-semibold"
+      onClick={onOpenMarksSidebar}
+    >
+      Marcas
+    </button>
     {/* Selector de columnas solo en escritorio */}
-    <div className="relative hidden sm:block min-w-[120px] flex-1 sm:flex-none">
+    <div className="relative hidden sm:block">
       <button
-        className="w-full px-4 py-2 rounded bg-primary text-primary-light border border-primary-dark transition duration-300 hover:scale-105 hover:bg-opacity-80 text-sm sm:text-base"
+        className="w-full py-3 rounded-xl bg-primary text-primary-light shadow-md hover:bg-primary-dark hover:scale-105 transition text-base font-semibold"
         onClick={onToggleColumnBar}
       >
         Columnas
       </button>
       {columnBarOpen && (
-        <div className="absolute left-0 mt-2 w-64 bg-secondary-light rounded shadow-lg border border-primary-dark z-30 p-4">
+        <div className="absolute right-0 mt-2 w-60 bg-secondary-light rounded-xl shadow-lg z-30 p-4">
           <input
             type="range"
             min="1"
@@ -212,7 +199,7 @@ const EpubToolbar: React.FC<EpubToolbarProps> = ({
             step="1"
             value={columns}
             onChange={(e) => onColumnsChange(Number(e.target.value))}
-            className="w-full"
+            className="w-full accent-primary"
           />
           <div className="text-center mt-2 text-sm">
             {columns} columna{columns > 1 ? "s" : ""}
