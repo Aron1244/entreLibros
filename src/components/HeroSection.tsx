@@ -25,7 +25,7 @@ export default function HeroSection() {
             {/* Botones */}
             <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <a
-                href="/books"
+                href="/catalog"
                 className="px-8 py-4 bg-primary-light text-primary-dark font-bold rounded-lg hover:bg-primary hover:text-white transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg text-lg flex items-center justify-center gap-2"
               >
                 <svg
@@ -46,7 +46,7 @@ export default function HeroSection() {
               </a>
 
               <a
-                href="/epub"
+                href="/catalog?tipo=ebook"
                 className="px-8 py-4 border-2 border-primary-light text-primary-light font-bold rounded-lg hover:bg-secondary-dark hover:text-white transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg text-lg flex items-center justify-center gap-2"
               >
                 <svg

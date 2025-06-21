@@ -37,8 +37,31 @@ export default function CatalogoInteractivo() {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 8; // Puedes ajustar el tamaño de página
 
+  // Función para leer parámetros de URL y aplicar filtros
+  const applyUrlFilters = () => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const tipoFromUrl = urlParams.get('tipo');
+      const categoriaFromUrl = urlParams.get('categoria');
+      const editorialFromUrl = urlParams.get('editorial');
+      
+      if (tipoFromUrl && (tipoFromUrl === 'fisico' || tipoFromUrl === 'ebook')) {
+        setFiltroTipo(tipoFromUrl);
+      }
+      if (categoriaFromUrl) {
+        setFiltroCategoria(categoriaFromUrl);
+      }
+      if (editorialFromUrl) {
+        setFiltroEditorial(editorialFromUrl);
+      }
+    }
+  };
+
   // Mock expanded dataset for better visual demo
   useEffect(() => {
+    // Aplicar filtros de URL al cargar el componente
+    applyUrlFilters();
+    
     // Simula un fetch
     setTimeout(() => {
       const data: Libro[] = [
