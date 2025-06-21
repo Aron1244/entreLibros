@@ -182,8 +182,8 @@ const EpubToolbar: React.FC<EpubToolbarProps> = ({
     >
       Marcas
     </button>
-    {/* Selector de columnas solo en escritorio */}
-    <div className="relative hidden sm:block">
+    {/* Selector de columnas solo en escritorio - COMENTADO TEMPORALMENTE */}
+    {/* <div className="relative hidden sm:block">
       <button
         className="w-full py-3 rounded-xl bg-primary text-primary-light shadow-md hover:bg-primary-dark hover:scale-105 transition text-base font-semibold"
         onClick={onToggleColumnBar}
@@ -206,7 +206,7 @@ const EpubToolbar: React.FC<EpubToolbarProps> = ({
           </div>
         </div>
       )}
-    </div>
+    </div> */}
   </div>
 );
 

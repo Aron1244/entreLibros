@@ -1,5 +1,5 @@
 // Agrega estas importaciones si no las tienes ya
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import ePub, { Book, Rendition } from "epubjs";
 import EpubToolbar from "./readerUi/EpubToolbar";
 import ChapterSidebar from "./readerUi/ChapterSidebar";
@@ -57,19 +57,49 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
   // Mantener referencia de los colores previos para evitar registrar el mismo tema repetidamente
   const prevCustomColors = useRef({ bg: customBgColor, text: customTextColor });
 
+  // Referencias para control de navegación
+  const isNavigatingRef = useRef(false);
+  const navigationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
     if (renditionRef.current) {
       applyTheme(renditionRef.current, theme);
     }
   }, [theme]);
 
-  const goNext = () => {
-    renditionRef.current?.next();
-  };
+  const goNext = useCallback(() => {
+    if (isNavigatingRef.current || !renditionRef.current) return;
+    
+    isNavigatingRef.current = true;
+    renditionRef.current.next();
+    
+    // Limpiar timeout anterior si existe
+    if (navigationTimeoutRef.current) {
+      clearTimeout(navigationTimeoutRef.current);
+    }
+    
+    // Permitir nueva navegación después de 500ms
+    navigationTimeoutRef.current = setTimeout(() => {
+      isNavigatingRef.current = false;
+    }, 500);
+  }, []);
 
-  const goPrev = () => {
-    renditionRef.current?.prev();
-  };
+  const goPrev = useCallback(() => {
+    if (isNavigatingRef.current || !renditionRef.current) return;
+    
+    isNavigatingRef.current = true;
+    renditionRef.current.prev();
+    
+    // Limpiar timeout anterior si existe
+    if (navigationTimeoutRef.current) {
+      clearTimeout(navigationTimeoutRef.current);
+    }
+    
+    // Permitir nueva navegación después de 500ms
+    navigationTimeoutRef.current = setTimeout(() => {
+      isNavigatingRef.current = false;
+    }, 500);
+  }, []);
 
   // --- Patch document.createElement to set sandbox on iframe for epub.js ---
   if (typeof window !== "undefined" && window.document) {
@@ -125,16 +155,18 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
     return () => {
       rendition.destroy();
       book.destroy();
+      if (navigationTimeoutRef.current) {
+        clearTimeout(navigationTimeoutRef.current);
+      }
     };
   }, [url]);
 
+  // Optimizar el efecto de tema para evitar re-renderizados innecesarios
   useEffect(() => {
-    if (renditionRef.current) {
+    if (renditionRef.current && !customThemeApplied) {
       renditionRef.current.themes.select(theme);
-      // Fuerza un re-render manteniendo la ubicación actual
-      renditionRef.current.display(String(location));
     }
-  }, [theme, location]);
+  }, [theme, customThemeApplied]);
 
   useEffect(() => {
     if (renditionRef.current) {
@@ -177,7 +209,7 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
       window.removeEventListener("resize", applyColumns);
       if (rendition) rendition.off("rendered", applyColumns);
     };
-  }, [columns, location]);
+  }, [columns]);
 
   const goTo = (href: string) => {
     if (!renditionRef.current || !bookRef.current) return;
@@ -254,9 +286,8 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
         },
       });
       renditionRef.current.themes.select("custom");
-      renditionRef.current.display(String(location));
     }
-  }, [customThemeApplied, customBgColor, customTextColor, location]);
+  }, [customThemeApplied, customBgColor, customTextColor]);
 
   useEffect(() => {
     if (!renditionRef.current) return;
@@ -283,7 +314,7 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
     if (customThemeApplied) {
       rendition.themes.select("custom");
     }
-  }, [customThemeApplied, customBgColor, customTextColor, location]);
+  }, [customThemeApplied, customBgColor, customTextColor]);
 
   useEffect(() => {
     if (!renditionRef.current) return;
@@ -363,27 +394,44 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
     setMarks((prev) => prev.filter((_, i) => i !== idx));
   };
 
-  // Debounce y control de tap para navegación táctil
-  const navDebounceRef = useRef(false);
+  // Mejorado sistema de navegación táctil con mejor debounce
   const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+  const touchStartTime = useRef<number | null>(null);
 
   const handleTouchStart = (e: React.TouchEvent, side: "left" | "right") => {
     touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+    touchStartTime.current = Date.now();
   };
+
   const handleTouchEnd = (e: React.TouchEvent, side: "left" | "right") => {
-    if (navDebounceRef.current) return;
+    if (!touchStartX.current || !touchStartY.current || !touchStartTime.current) return;
+    
     const startX = touchStartX.current;
+    const startY = touchStartY.current;
+    const startTime = touchStartTime.current;
     const endX = e.changedTouches[0].clientX;
-    // Solo si el tap fue casi en el mismo lugar (no swipe)
-    if (startX !== null && Math.abs(endX - startX) < 20) {
-      navDebounceRef.current = true;
-      if (side === "left") goPrev();
-      else goNext();
-      setTimeout(() => {
-        navDebounceRef.current = false;
-      }, 350);
+    const endY = e.changedTouches[0].clientY;
+    const endTime = Date.now();
+    
+    const deltaX = Math.abs(endX - startX);
+    const deltaY = Math.abs(endY - startY);
+    const deltaTime = endTime - startTime;
+    
+    // Solo procesar si es un tap válido (no swipe)
+    if (deltaX < 30 && deltaY < 30 && deltaTime < 300) {
+      if (side === "left") {
+        goPrev();
+      } else {
+        goNext();
+      }
     }
+    
+    // Resetear valores
     touchStartX.current = null;
+    touchStartY.current = null;
+    touchStartTime.current = null;
   };
 
   return (

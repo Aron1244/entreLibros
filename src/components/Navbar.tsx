@@ -55,7 +55,7 @@ const Navbar = () => {
         <button
           onClick={showNavbar}
           aria-label="Mostrar menú"
-          className="fixed bottom-6 right-6 z-[9999] bg-primary text-white px-4 py-2 rounded-full shadow-lg hover:bg-primary-dark transition-all duration-300"
+          className="fixed bottom-6 right-6 z-[9999] bg-primary text-white px-4 py-2 rounded-full opacity-0 hover:opacity-100 transition-all duration-300 hidden md:block"
         >
           <svg
             className="w-6 h-6 text-white transition-transform duration-300"
