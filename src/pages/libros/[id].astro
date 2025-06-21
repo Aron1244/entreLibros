@@ -1,0 +1,175 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ProductDetailTabs from "../../components/ProductDetailTabs";
+import { getMockLibros } from "../../data/libros";
+
+// Función requerida por Astro para rutas dinámicas
+export async function getStaticPaths() {
+  const mockLibros = getMockLibros();
+  return mockLibros.map((libro) => ({
+    params: { id: libro.id.toString() },
+    props: { 
+      libro,
+      todosLosLibros: mockLibros // Pasar todos los libros como props
+    },
+  }));
+}
+
+// Obtener el libro y todos los libros desde las props
+const { libro, todosLosLibros } = Astro.props;
+---
+
+<Layout>
+  <main class="min-h-screen bg-primary-dark">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+      <!-- Breadcrumb -->
+      <nav class="mb-8">
+        <ol class="flex items-center space-x-2 text-sm text-primary-light">
+          <li><a href="/" class="hover:text-white transition-colors">Inicio</a></li>
+          <li class="text-primary-light">/</li>
+          <li><a href="/catalog" class="hover:text-white transition-colors">Catálogo</a></li>
+          <li class="text-primary-light">/</li>
+          <li class="text-white font-medium">{libro.titulo}</li>
+        </ol>
+      </nav>
+
+      <!-- Product Details -->
+      <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
+          <!-- Image Section -->
+          <div class="space-y-4">
+            <div class="relative">
+              <img 
+                src={libro.imagen} 
+                alt={libro.titulo}
+                class="w-full h-auto rounded-lg shadow-md"
+                onerror="this.src='https://images.pexels.com/photos/1766604/pexels-photo-1766604.jpeg?auto=compress&cs=tinysrgb&w=800'"
+              />
+              <div class="absolute top-4 right-4">
+                <span class={`px-3 py-1 rounded-full text-xs font-medium ${
+                  libro.tipo === "ebook" 
+                    ? "bg-secondary-light text-secondary-dark" 
+                    : "bg-accent-light text-accent-dark"
+                }`}>
+                  {libro.tipo === "ebook" ? "eBook" : "Físico"}
+                </span>
+              </div>
+            </div>
+            
+            <!-- Rating -->
+            <div class="flex items-center space-x-2">
+              <div class="flex items-center">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <svg 
+                    class={`w-5 h-5 ${i < Math.floor(libro.rating) ? 'text-yellow-400' : 'text-gray-300'}`}
+                    fill="currentColor" 
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                ))}
+              </div>
+              <span class="text-sm text-gray-600">{libro.rating} ({libro.reviews} reseñas)</span>
+            </div>
+          </div>
+
+          <!-- Product Info -->
+          <div class="space-y-6">
+            <div>
+              <h1 class="text-3xl font-bold text-gray-900 mb-2">{libro.titulo}</h1>
+              <p class="text-lg text-gray-600 mb-4">por <span class="font-semibold">{libro.autor}</span></p>
+              
+              <!-- Categories and Tags -->
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span class="px-3 py-1 bg-primary-light text-primary-dark text-sm font-medium rounded-full">
+                  {libro.categoria}
+                </span>
+                {libro.generos.slice(0, 2).map(genero => (
+                  <span class="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
+                    {genero}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <!-- Price and Stock -->
+            <div class="border-t border-b border-gray-200 py-4">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-3xl font-bold text-primary-dark">
+                  ${libro.precio.toLocaleString("es-CL")}
+                </span>
+                <span class={`px-3 py-1 rounded-full text-sm font-medium ${
+                  libro.stock > 10 ? 'bg-green-100 text-green-800' : 
+                  libro.stock > 0 ? 'bg-yellow-100 text-yellow-800' : 
+                  'bg-red-100 text-red-800'
+                }`}>
+                  {libro.stock > 10 ? 'En stock' : 
+                   libro.stock > 0 ? `Solo ${libro.stock} disponibles` : 
+                   'Agotado'}
+                </span>
+              </div>
+              
+              <!-- Action Buttons -->
+              <div class="flex flex-col sm:flex-row gap-3">
+                <button class="flex-1 bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center">
+                  <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  Añadir al carrito
+                </button>
+                <button class="flex-1 border border-primary text-primary hover:bg-primary-dark hover:text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+                  Comprar ahora
+                </button>
+              </div>
+            </div>
+
+            <!-- Description -->
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900 mb-3">Descripción</h3>
+              <p class="text-gray-600 leading-relaxed">{libro.descripcion}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product Details Tabs -->
+        <ProductDetailTabs libro={libro} client:load />
+      </div>
+
+      <!-- Related Books Section -->
+      <div class="mt-12">
+        <h2 class="text-2xl font-bold text-white mb-6">Libros relacionados</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {todosLosLibros.filter(l => l.id !== libro.id).slice(0, 4).map(libroRelacionado => (
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+              <img 
+                src={libroRelacionado.imagen} 
+                alt={libroRelacionado.titulo}
+                class="w-full h-48 object-cover"
+                onerror="this.src='https://images.pexels.com/photos/1766604/pexels-photo-1766604.jpeg?auto=compress&cs=tinysrgb&w=800'"
+              />
+              <div class="p-4">
+                <h3 class="font-semibold text-gray-900 mb-2 line-clamp-2">{libroRelacionado.titulo}</h3>
+                <p class="text-sm text-gray-600 mb-2">{libroRelacionado.autor}</p>
+                <div class="flex justify-between items-center">
+                  <span class="font-bold text-primary-dark">${libroRelacionado.precio.toLocaleString("es-CL")}</span>
+                  <a href={`/libros/${libroRelacionado.id}`} class="text-primary hover:text-primary-dark text-sm font-medium">
+                    Ver detalles
+                  </a>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style> 
