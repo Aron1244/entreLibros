@@ -123,32 +123,33 @@ export default function Cart() {
                 
                 <div className="divide-y divide-gray-200">
                   {cartItems.map((item) => (
-                    <div key={item.id} className="p-6 hover:bg-gray-50 transition-colors duration-200">
-                      <div className="flex items-center gap-4">
-                        {/* Imagen del producto */}
-                        <div className="flex-shrink-0">
-                          <div className="w-20 h-24 rounded-lg overflow-hidden border border-gray-200 shadow-sm">
-                            <img
-                              src={item.image}
-                              alt={item.name}
-                              className="w-full h-full object-cover"
-                              loading="lazy"
-                            />
+                    <div key={item.id} className="p-4 sm:p-6 hover:bg-gray-50 transition-colors duration-200">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4">
+                        {/* Imagen y Info del producto */}
+                        <div className="flex flex-1 items-center gap-4">
+                          <div className="flex-shrink-0">
+                            <div className="w-20 h-24 rounded-lg overflow-hidden border border-gray-200 shadow-sm">
+                              <img
+                                src={item.image}
+                                alt={item.name}
+                                className="w-full h-full object-cover"
+                                loading="lazy"
+                              />
+                            </div>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-lg font-semibold text-gray-900 truncate">
+                              {item.name}
+                            </h3>
+                            <p className="text-gray-600 mt-1">
+                              ${item.price.toLocaleString('es-CL')}
+                            </p>
                           </div>
                         </div>
-                        
-                        {/* Información del producto */}
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-lg font-semibold text-gray-900 truncate">
-                            {item.name}
-                          </h3>
-                          <p className="text-gray-600 mt-1">
-                            ${item.price.toLocaleString()}
-                          </p>
-                        </div>
-                        
-                        {/* Controles de cantidad */}
-                        <div className="flex items-center gap-3">
+
+                        {/* Controles y Subtotal */}
+                        <div className="flex items-center justify-between mt-4 sm:mt-0 sm:justify-end sm:gap-6">
+                          {/* Controles de cantidad */}
                           <div className="flex items-center border border-gray-300 rounded-lg">
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity - 1)}
@@ -159,11 +160,9 @@ export default function Cart() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
                               </svg>
                             </button>
-                            
-                            <span className="px-4 py-2 text-center min-w-[60px] font-medium">
+                            <span className="px-4 py-2 text-center min-w-[50px] font-medium">
                               {item.quantity}
                             </span>
-                            
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
                               className="px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
@@ -173,24 +172,24 @@ export default function Cart() {
                               </svg>
                             </button>
                           </div>
-                          
-                          {/* Subtotal */}
-                          <div className="text-right min-w-[100px]">
-                            <p className="text-lg font-semibold text-gray-900">
-                              ${subtotal(item).toLocaleString()}
-                            </p>
+
+                          {/* Subtotal y Eliminar */}
+                          <div className="flex items-center gap-2 sm:gap-4">
+                             <div className="text-right min-w-[80px] sm:min-w-[100px]">
+                                <p className="text-lg font-semibold text-gray-900">
+                                  ${subtotal(item).toLocaleString('es-CL')}
+                                </p>
+                              </div>
+                            <button
+                              onClick={() => removeItem(item.id)}
+                              className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
+                              aria-label={`Eliminar ${item.name} del carrito`}
+                            >
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                            </button>
                           </div>
-                          
-                          {/* Botón eliminar */}
-                          <button
-                            onClick={() => removeItem(item.id)}
-                            className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
-                            aria-label={`Eliminar ${item.name} del carrito`}
-                          >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                          </button>
                         </div>
                       </div>
                     </div>
@@ -209,7 +208,7 @@ export default function Cart() {
                 <div className="space-y-4 mb-6">
                   <div className="flex justify-between text-gray-600">
                     <span>Subtotal ({cartItems.length} productos)</span>
-                    <span>${totalPrice.toLocaleString()}</span>
+                    <span>${totalPrice.toLocaleString('es-CL')}</span>
                   </div>
                   
                   <div className="flex justify-between text-gray-600">
@@ -220,7 +219,7 @@ export default function Cart() {
                   <div className="border-t border-gray-200 pt-4">
                     <div className="flex justify-between text-lg font-semibold text-gray-900">
                       <span>Total</span>
-                      <span>${totalPrice.toLocaleString()}</span>
+                      <span>${totalPrice.toLocaleString('es-CL')}</span>
                     </div>
                   </div>
                 </div>
