@@ -236,30 +236,30 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
   }, [columns]);
 
   const goTo = (href: string) => {
-    if (!renditionRef.current || !bookRef.current) return;
-
-    // Encuentra la sección del spine cuyo href termina con el href recibido
-    const spine = bookRef.current.spine;
-
-    let section: any = null;
-    spine.each((item: { href: string }) => {
-      if (item.href.endsWith(href)) {
-        section = item;
-        return false; // rompe el each
-      }
-      return true; // continúa el each
-    });
-
-    if (!section) {
-      console.error("No se encontró sección en el spine para href:", href);
+    const book = bookRef.current;
+    if (!book || !renditionRef.current) {
       return;
     }
 
-    renditionRef.current
-      .display(section?.href)
-      .then(() => setSidebarOpen(false))
+    // Usar type assertion para acceder a las propiedades del spine
+    const spine = book.spine as any;
+    const section = spine.items?.find((item: any) => item.href.endsWith(href));
+
+    const target = section ? section.href : href;
+
+    renditionRef.current.display(target)
+      .then(() => {
+        setSidebarOpen(false);
+      })
       .catch((err) => {
-        console.error("Error navegando a sección:", href, err);
+        console.error(`Failed to display target: ${target}`, err);
+        // If the smart find fails, try the original href as a last resort
+        if (target !== href) {
+          console.log(`Smart find failed, falling back to original href: ${href}`);
+          renditionRef.current?.display(href).then(() => {
+            setSidebarOpen(false);
+          }).catch(e => console.error(`Fallback to original href also failed: ${href}`, e));
+        }
       });
   };
 
@@ -459,7 +459,7 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
       <div className="relative w-full h-16 flex items-center justify-end pr-6">
         {!drawerOpen && (
           <button
-            className="bg-primary text-primary-light p-3 rounded-full shadow-lg hover:scale-110 transition-transform opacity-60 hover:opacity-100 transition"
+            className="bg-primary text-primary-light p-3 rounded-full shadow-lg hover:scale-110 transition-transform opacity-60 hover:opacity-100"
             onClick={() => setDrawerOpen(true)}
             title="Abrir menú"
           >
