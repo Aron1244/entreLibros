@@ -91,6 +91,44 @@ const Navbar = () => {
               </span>
             </a>
 
+            {/* Botones de carrito y perfil para móvil */}
+            <div className="md:hidden flex items-center gap-3">
+              <a href="/cart" aria-label="Carro de compras" className="relative">
+                <svg
+                  className="w-7 h-7 text-primary-light rounded-full border border-primary-light p-1.5 transition-colors duration-200 hover:bg-white hover:text-primary hover:border-primary"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M4 4a1 1 0 0 1 1-1h1.5a1 1 0 0 1 .979.796L7.939 6H19a1 1 0 0 1 .979 1.204l-1.25 6a1 1 0 0 1-.979.796H9.605l.208 1H17a3 3 0 1 1-2.83 2h-2.34a3 3 0 1 1-4.009-1.76L5.686 5H5a1 1 0 0 1-1-1Z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                {/* Indicador de cantidad (opcional) */}
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                  0
+                </span>
+              </a>
+              <a
+                href="/profile"
+                aria-label="Perfil"
+                className="relative"
+              >
+                <svg
+                  className="w-7 h-7 text-primary-light rounded-full border border-primary-light p-1.5 transition-colors duration-200 hover:bg-white hover:text-primary hover:border-primary"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M12 20a7.966 7.966 0 0 1-5.002-1.756v-.683c0-1.794 1.492-3.25 3.333-3.25h3.334c1.84 0 3.333 1.456 3.333 3.25v.683A7.966 7.966 0 0 1 12 20ZM2 12C2 6.477 6.477 2 12 2s10 4.477 10 10c0 5.5-4.44 9.963-9.932 10h-.138C6.438 21.962 2 17.5 2 12Zm10-5c-1.84 0-3.333 1.455-3.333 3.25S10.159 13.5 12 13.5c1.84 0 3.333-1.455 3.333-3.25S13.841 7 12 7Z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </a>
+            </div>
+
             <div className="hidden md:flex items-center flex-1 justify-end text-primary-light gap-4">
               <NavLink href="/" label="Inicio" scrolled={scrolled} />
               <NavLink href="/catalog" label="Catálogo" scrolled={scrolled} />
@@ -135,13 +173,13 @@ const Navbar = () => {
             </div>
 
             <button
-              className="md:hidden focus:outline-none"
+              className="md:hidden focus:outline-none p-2 rounded-lg hover:bg-white/10 transition-colors duration-200"
               onClick={toggleMenu}
               aria-label="Toggle Menu"
             >
               <svg
                 className={`w-6 h-6 ${
-                  scrolled ? "text-book-primary" : "text-book-dark"
+                  scrolled ? "text-white" : "text-primary-light"
                 }`}
                 fill="none"
                 stroke="currentColor"
@@ -173,31 +211,89 @@ const Navbar = () => {
               transition-all 
               duration-300 
               ease-in-out
-              ${isOpen ? "max-h-96 opacity-100 mt-4" : "max-h-0 opacity-0"}
+              ${isOpen ? "max-h-[500px] opacity-100 mt-4" : "max-h-0 opacity-0"}
             `}
           >
-            <div className="flex flex-col space-y-3 py-4 bg-primary-light rounded-lg shadow-lg px-4 animate-fade-in">
-              <SearchButton />
-              <MobileNavLink
-                href="/"
-                label="Inicio"
-                onClick={() => setIsOpen(false)}
-              />
-              <MobileNavLink
-                href="/catalog"
-                label="Catálogo"
-                onClick={() => setIsOpen(false)}
-              />
-              <MobileNavLink
-                href="/news"
-                label="Novedades"
-                onClick={() => setIsOpen(false)}
-              />
-              <MobileNavLink
-                href="/contact"
-                label="Contacto"
-                onClick={() => setIsOpen(false)}
-              />
+            <div className="flex flex-col space-y-4 py-6 bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl px-6 border border-white/20">
+              {/* Sección de búsqueda */}
+              <div className="mb-4">
+                <h3 className="text-sm font-semibold text-gray-700 mb-3">Buscar</h3>
+                <SearchButton />
+              </div>
+              
+              {/* Separador */}
+              <div className="border-t border-gray-200 my-2"></div>
+              
+              {/* Enlaces de navegación */}
+              <div className="space-y-3">
+                <h3 className="text-sm font-semibold text-gray-700 mb-3">Navegación</h3>
+                <MobileNavLink
+                  href="/"
+                  label="Inicio"
+                  onClick={() => setIsOpen(false)}
+                />
+                <MobileNavLink
+                  href="/catalog"
+                  label="Catálogo"
+                  onClick={() => setIsOpen(false)}
+                />
+                <MobileNavLink
+                  href="/news"
+                  label="Novedades"
+                  onClick={() => setIsOpen(false)}
+                />
+                <MobileNavLink
+                  href="/contact"
+                  label="Contacto"
+                  onClick={() => setIsOpen(false)}
+                />
+              </div>
+              
+              {/* Separador */}
+              <div className="border-t border-gray-200 my-2"></div>
+              
+              {/* Acciones rápidas */}
+              <div className="space-y-3">
+                <h3 className="text-sm font-semibold text-gray-700 mb-3">Acciones</h3>
+                <div className="flex gap-4">
+                  <a
+                    href="/cart"
+                    className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200 flex-1 justify-center"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <svg
+                      className="w-5 h-5 text-primary"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M4 4a1 1 0 0 1 1-1h1.5a1 1 0 0 1 .979.796L7.939 6H19a1 1 0 0 1 .979 1.204l-1.25 6a1 1 0 0 1-.979.796H9.605l.208 1H17a3 3 0 1 1-2.83 2h-2.34a3 3 0 1 1-4.009-1.76L5.686 5H5a1 1 0 0 1-1-1Z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <span className="text-sm font-medium text-gray-700">Carrito</span>
+                  </a>
+                  <a
+                    href="/profile"
+                    className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200 flex-1 justify-center"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <svg
+                      className="w-5 h-5 text-primary"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M12 20a7.966 7.966 0 0 1-5.002-1.756v-.683c0-1.794 1.492-3.25 3.333-3.25h3.334c1.84 0 3.333 1.456 3.333 3.25v.683A7.966 7.966 0 0 1 12 20ZM2 12C2 6.477 6.477 2 12 2s10 4.477 10 10c0 5.5-4.44 9.963-9.932 10h-.138C6.438 21.962 2 17.5 2 12Zm10-5c-1.84 0-3.333 1.455-3.333 3.25S10.159 13.5 12 13.5c1.84 0 3.333-1.455 3.333-3.25S13.841 7 12 7Z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <span className="text-sm font-medium text-gray-700">Perfil</span>
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -242,7 +338,7 @@ const MobileNavLink: React.FC<MobileNavLinkProps> = ({
 }) => (
   <a
     href={href}
-    className="text-book-dark font-medium py-2 hover:text-book-accent transition-colors duration-200"
+    className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200 text-gray-700 font-medium"
     onClick={onClick}
   >
     {label}
