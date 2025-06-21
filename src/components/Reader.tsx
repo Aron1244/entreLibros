@@ -61,11 +61,10 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
   const isNavigatingRef = useRef(false);
   const navigationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    if (renditionRef.current) {
-      applyTheme(renditionRef.current, theme);
-    }
-  }, [theme]);
+  // Mejorado sistema de navegación táctil con mejor debounce
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+  const touchStartTime = useRef<number | null>(null);
 
   const goNext = useCallback(() => {
     if (isNavigatingRef.current || !renditionRef.current) return;
@@ -100,6 +99,31 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
       isNavigatingRef.current = false;
     }, 500);
   }, []);
+
+  // Event listener para la tecla 'm' y flechas de navegación
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.key.toLowerCase() === 'm') {
+        setDrawerOpen(prev => !prev);
+      } else if (event.key === 'ArrowLeft') {
+        goPrev();
+      } else if (event.key === 'ArrowRight') {
+        goNext();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyPress);
+    
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [goPrev, goNext]);
+
+  useEffect(() => {
+    if (renditionRef.current) {
+      applyTheme(renditionRef.current, theme);
+    }
+  }, [theme]);
 
   // --- Patch document.createElement to set sandbox on iframe for epub.js ---
   if (typeof window !== "undefined" && window.document) {
@@ -394,11 +418,6 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
     setMarks((prev) => prev.filter((_, i) => i !== idx));
   };
 
-  // Mejorado sistema de navegación táctil con mejor debounce
-  const touchStartX = useRef<number | null>(null);
-  const touchStartY = useRef<number | null>(null);
-  const touchStartTime = useRef<number | null>(null);
-
   const handleTouchStart = (e: React.TouchEvent, side: "left" | "right") => {
     touchStartX.current = e.touches[0].clientX;
     touchStartY.current = e.touches[0].clientY;
@@ -436,27 +455,19 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
 
   return (
     <div className="pt-20 bg-primary-dark">
-      <div className="relative w-full">
-        {/* Botón flotante para mostrar el menú drawer */}
-        {/* <button
-          className="fixed top-24 right-6 z-50 bg-primary text-primary-light p-3 rounded-full shadow-lg hover:scale-110 transition-transform opacity-60 hover:opacity-100 transition"
-          onClick={() => setDrawerOpen(true)}
-          title="Abrir menú"
-        >
-          <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
-        </button> */}
-      </div>
-      <div className="relative w-full h-screen border rounded shadow overflow-hidden flex">
-        {/* Botón flotante para mostrar el menú drawer (ahora dentro del visor) */}
+      {/* Header con botón del menú - estático fuera del visor */}
+      <div className="relative w-full h-16 flex items-center justify-end pr-6">
         {!drawerOpen && (
           <button
-            className="absolute top-6 right-6 z-50 bg-primary text-primary-light p-3 rounded-full shadow-lg hover:scale-110 opacity-60 hover:opacity-100 transition"
+            className="bg-primary text-primary-light p-3 rounded-full shadow-lg hover:scale-110 transition-transform opacity-60 hover:opacity-100 transition"
             onClick={() => setDrawerOpen(true)}
             title="Abrir menú"
           >
             <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
           </button>
         )}
+      </div>
+      <div className="relative w-full h-screen border rounded shadow overflow-hidden flex">
         {/* Drawer lateral derecho dentro del visor */}
         <div className={`absolute top-0 right-0 h-full w-72 max-w-full z-40 bg-secondary-light shadow-2xl transform transition-transform duration-300 ${drawerOpen ? 'translate-x-0' : 'translate-x-full'}`}>
           <EpubToolbar
