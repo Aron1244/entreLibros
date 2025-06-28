@@ -26,6 +26,9 @@ interface EpubToolbarProps {
   onToggleColumnBar: () => void;
   // NUEVO: para plegar la barra
   onCollapseToolbar: () => void;
+  // NUEVO: para pantalla completa
+  isFullscreen: boolean;
+  onToggleFullscreen: () => void;
 }
 
 const EpubToolbar: React.FC<EpubToolbarProps> = ({
@@ -50,8 +53,10 @@ const EpubToolbar: React.FC<EpubToolbarProps> = ({
   columnBarOpen,
   onToggleColumnBar,
   onCollapseToolbar,
+  isFullscreen,
+  onToggleFullscreen,
 }) => (
-  <div className="flex flex-col h-full bg-primary-dark border-l border-gray-700">
+  <div className="toolbar-container flex flex-col h-full bg-primary-dark border-l border-gray-700">
     {/* Header del menú */}
     <div className="flex items-center justify-between p-4 border-b border-gray-700 bg-primary-dark">
       <h3 className="text-lg font-bold text-white">Configuración</h3>
@@ -219,6 +224,46 @@ const EpubToolbar: React.FC<EpubToolbarProps> = ({
             </div>
           )}
         </div>
+
+        {/* Columnas */}
+        <div className="relative">
+          <button
+            className="w-full flex items-center justify-between p-3 rounded-xl bg-secondary-dark border border-gray-700 shadow-sm hover:shadow-md hover:border-primary hover:bg-primary-dark transition-all duration-200 group"
+            onClick={onToggleColumnBar}
+          >
+            <div className="flex items-center space-x-3">
+              <div className="p-2 rounded-lg bg-gradient-to-br from-orange-400 to-red-500 text-white">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </div>
+              <span className="font-medium text-white group-hover:text-primary-light">Columnas</span>
+            </div>
+            <span className="text-sm text-primary-light group-hover:text-white">{columns}</span>
+          </button>
+          {columnBarOpen && (
+            <div className="absolute right-0 mt-2 w-72 bg-gray-800 rounded-xl shadow-xl border border-gray-700 z-30 p-4">
+              <div className="space-y-3">
+                <div className="flex justify-between text-sm text-primary-light">
+                  <span>1 Columna</span>
+                  <span>3 Columnas</span>
+                </div>
+                <input
+                  type="range"
+                  min="1"
+                  max="3"
+                  step="1"
+                  value={columns}
+                  onChange={(e) => onColumnsChange(parseInt(e.target.value))}
+                  className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+                />
+                <div className="text-center text-sm font-medium text-white">
+                  {columns} {columns === 1 ? 'Columna' : 'Columnas'}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Sección: Navegación */}
@@ -250,6 +295,27 @@ const EpubToolbar: React.FC<EpubToolbarProps> = ({
           </div>
           <span className="font-medium text-white group-hover:text-primary-light">Marcas</span>
         </button>
+
+        {/* Pantalla Completa */}
+        <button
+          className="w-full flex items-center space-x-3 p-3 rounded-xl bg-secondary-dark border border-gray-700 shadow-sm hover:shadow-md hover:border-primary hover:bg-primary-dark transition-all duration-200 group"
+          onClick={onToggleFullscreen}
+        >
+          <div className="p-2 rounded-lg bg-gradient-to-br from-blue-400 to-cyan-500 text-white">
+            {isFullscreen ? (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+              </svg>
+            )}
+          </div>
+          <span className="font-medium text-white group-hover:text-primary-light">
+            {isFullscreen ? "Salir Pantalla Completa" : "Pantalla Completa"}
+          </span>
+        </button>
       </div>
 
       {/* Atajos de teclado */}
@@ -267,6 +333,10 @@ const EpubToolbar: React.FC<EpubToolbarProps> = ({
           <div className="flex justify-between">
             <span>Página anterior</span>
             <kbd className="px-2 py-1 bg-secondary-dark rounded text-white">←</kbd>
+          </div>
+          <div className="flex justify-between">
+            <span>Pantalla completa</span>
+            <kbd className="px-2 py-1 bg-secondary-dark rounded text-white">F11</kbd>
           </div>
         </div>
       </div>
