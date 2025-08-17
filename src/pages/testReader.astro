@@ -1,10 +1,13 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { EpubViewer } from "../components/Reader";
+import ProtectedRoute from '../components/ProtectedRoute';
 ---
 
-<Layout>
-  <main>
-    <EpubViewer client:load url="/testBook/alicia.epub" initialTheme="dark" />
-  </main>
+<Layout title="Lector de Prueba - Entre Libros">
+  <ProtectedRoute client:load>
+    <main>
+      <EpubViewer client:load url="/testBook/alicia.epub" initialTheme="dark" />
+    </main>
+  </ProtectedRoute>
 </Layout>

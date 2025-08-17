@@ -1,102 +1,520 @@
 ---
-
 import Layout from "../layouts/Layout.astro";
-
-let error = '';
-let form = {
-  name: '',
-  email: '',
-  password: '',
-  confirmPassword: ''
-};
-
-const handleSubmit = (event: Event) => {
-  event.preventDefault();
-
-  const data = new FormData(event.target as HTMLFormElement);
-  const name = data.get('name');
-  const email = data.get('email');
-  const password = data.get('password');
-  const confirmPassword = data.get('confirmPassword');
-
-  if (password !== confirmPassword) {
-    error = 'Las contraseñas no coinciden';
-    return;
-  }
-
-  // Aquí llamas a tu API o backend para registrar el usuario
-  console.log({ name, email, password });
-};
+import AuthRedirect from "../components/AuthRedirect";
 ---
 
-<Layout title="EntreLibros - Tu librería online favorita">
-    <div class="min-h-screen flex items-center justify-center bg-primary-dark px-4 py-12">
-      <div class="max-w-md w-full bg-primary-light rounded-lg p-8 shadow-lg text-white">
-        <h2 class="text-3xl font-extrabold mb-6 text-center">Crear cuenta</h2>
-    
-        <form class="space-y-6" method="POST" action="/register">
+<Layout title="EntreLibros - Registro">
+  <AuthRedirect client:load>
+    <div
+      class="min-h-screen flex items-center justify-center bg-primary-dark px-4 py-12"
+    >
+      <div class="max-w-md w-full bg-primary-light rounded-2xl p-8 shadow-2xl">
+        <!-- Header -->
+        <div class="text-center mb-8">
+          <h2 class="text-3xl font-bold text-gray-800 mb-2">Crear cuenta</h2>
+          <p class="text-gray-600">
+            Únete a EntreLibros y descubre miles de historias
+          </p>
+        </div>
+
+        <!-- Formulario -->
+        <div class="space-y-6">
+          <!-- Nombre completo -->
           <div>
-            <label for="name" class="block mb-1 text-primary-dark font-semibold">Nombre completo</label>
-            <input
-              type="text"
-              name="name"
-              id="name"
-              class="w-full rounded-md px-4 py-3 text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-light bg-white"
-              placeholder="Tu nombre"
-              required
-            />
+            <label
+              for="name"
+              class="block text-sm font-semibold text-gray-700 mb-2"
+            >
+              Nombre completo
+            </label>
+            <div class="relative">
+              <input
+                type="text"
+                id="name"
+                class="w-full rounded-lg px-4 py-3 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+                placeholder="Nombre de usuario"
+                required
+              />
+              <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                <svg
+                  class="w-5 h-5 text-gray-400"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M12 20a7.966 7.966 0 0 1-5.002-1.756v-.683c0-1.794 1.492-3.25 3.333-3.25h3.334c1.84 0 3.333 1.456 3.333 3.25v.683A7.966 7.966 0 0 1 12 20ZM2 12C2 6.477 6.477 2 12 2s10 4.477 10 10c0 5.5-4.44 9.963-9.932 10h-.138C6.438 21.962 2 17.5 2 12Zm10-5c-1.84 0-3.333 1.455-3.333 3.25S10.159 13.5 12 13.5c1.84 0 3.333-1.455 3.333-3.25S13.841 7 12 7Z"
+                    clip-rule="evenodd"></path>
+                </svg>
+              </div>
+            </div>
           </div>
-    
+
+          <!-- Email -->
           <div>
-            <label for="email" class="block mb-1 text-primary-dark font-semibold">Correo electrónico</label>
-            <input
-              type="email"
-              name="email"
-              id="email"
-              class="w-full rounded-md px-4 py-3 text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-light bg-white"
-              placeholder="correo@ejemplo.com"
-              required
-            />
+            <label
+              for="email"
+              class="block text-sm font-semibold text-gray-700 mb-2"
+            >
+              Correo electrónico
+            </label>
+            <div class="relative">
+              <input
+                type="email"
+                id="email"
+                class="w-full rounded-lg px-4 py-3 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+                placeholder="correo@ejemplo.com"
+                required
+              />
+              <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                <svg
+                  class="w-5 h-5 text-gray-400"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z"
+                  ></path>
+                  <path
+                    d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z"
+                  ></path>
+                </svg>
+              </div>
+            </div>
           </div>
-    
+
+          <!-- Contraseña -->
           <div>
-            <label for="password" class="block mb-1 text-primary-dark font-semibold">Contraseña</label>
-            <input
-              type="password"
-              name="password"
-              id="password"
-              class="w-full rounded-md px-4 py-3 text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-light bg-white"
-              placeholder="Mínimo 6 caracteres"
-              required
-              minlength="6"
-            />
+            <label
+              for="password"
+              class="block text-sm font-semibold text-gray-700 mb-2"
+            >
+              Contraseña
+            </label>
+            <div class="relative">
+              <input
+                type="password"
+                id="password"
+                class="w-full rounded-lg px-4 py-3 pr-12 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+                placeholder="Mínimo 6 caracteres"
+                required
+                minlength="6"
+              />
+              <button
+                type="button"
+                id="toggle-password"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                aria-label="Mostrar contraseña"
+              >
+                <svg
+                  class="w-5 h-5 text-gray-400"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3.933 13.909A4.357 4.357 0 0 1 3 12c0-1 4-6 9-6m7.6 3.8A5.068 5.068 0 0 1 21 12c0 1-3 6-9 6-.314 0-.62-.014-.918-.04M5 19 19 5m-4 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+            <div class="mt-1 text-xs text-gray-500">
+              <div class="flex items-center gap-2">
+                <span id="password-strength" class="font-medium"
+                  >Seguridad:</span
+                >
+                <div class="flex gap-1">
+                  <div id="strength-1" class="w-2 h-2 rounded-full bg-gray-300">
+                  </div>
+                  <div id="strength-2" class="w-2 h-2 rounded-full bg-gray-300">
+                  </div>
+                  <div id="strength-3" class="w-2 h-2 rounded-full bg-gray-300">
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-    
+
+          <!-- Confirmar contraseña -->
           <div>
-            <label for="confirmPassword" class="block mb-1 text-primary-dark font-semibold">Confirmar contraseña</label>
-            <input
-              type="password"
-              name="confirmPassword"
-              id="confirmPassword"
-              class="w-full rounded-md px-4 py-3 text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-light bg-white"
-              placeholder="Repite tu contraseña"
-              required
-              minlength="6"
-            />
+            <label
+              for="confirmPassword"
+              class="block text-sm font-semibold text-gray-700 mb-2"
+            >
+              Confirmar contraseña
+            </label>
+            <div class="relative">
+              <input
+                type="password"
+                id="confirmPassword"
+                class="w-full rounded-lg px-4 py-3 pr-12 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+                placeholder="Repite tu contraseña"
+                required
+                minlength="6"
+              />
+              <button
+                type="button"
+                id="toggle-confirm-password"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                aria-label="Mostrar contraseña"
+              >
+                <svg
+                  class="w-5 h-5 text-gray-400"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3.933 13.909A4.357 4.357 0 0 1 3 12c0-1 4-6 9-6m7.6 3.8A5.068 5.068 0 0 1 21 12c0 1-3 6-9 6-.314 0-.62-.014-.918-.04M5 19 19 5m-4 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+            <div class="mt-1 text-xs text-gray-500">
+              <span id="password-match" class="font-medium"
+                >Las contraseñas deben coincidir</span
+              >
+            </div>
           </div>
-    
-          {error && (
-            <p class="text-red-400 font-semibold text-center">{error}</p>
-          )}
-    
-          <button
-            type="submit"
-            class="w-full py-3 bg-primary-light text-primary-dark font-bold rounded-lg hover:bg-primary hover:text-white transition duration-300"
+
+          <!-- Mensajes de error y éxito -->
+          <div
+            id="error-message"
+            class="text-red-600 font-medium text-center bg-red-50 p-3 rounded-lg hidden border border-red-200"
           >
-            Registrarse
+          </div>
+          <div
+            id="success-message"
+            class="text-green-600 font-medium text-center bg-green-50 p-3 rounded-lg hidden border border-green-200"
+          >
+          </div>
+
+          <!-- Botón de registro -->
+          <button
+            type="button"
+            id="register-button"
+            class="w-full py-3 bg-primary text-white font-bold rounded-lg hover:from-primary-dark hover:to-primary transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+          >
+            Crear cuenta
           </button>
-        </form>
+
+          <!-- Términos y condiciones -->
+          <div class="text-center">
+            <p class="text-xs text-gray-500">
+              Al registrarte, aceptas nuestros
+              <a href="#" class="text-primary hover:underline font-medium"
+                >Términos de servicio</a
+              >
+              y
+              <a href="#" class="text-primary hover:underline font-medium"
+                >Política de privacidad</a
+              >
+            </p>
+          </div>
+
+          <!-- Enlace a login -->
+          <div class="text-center pt-4 border-t border-gray-200">
+            <p class="text-gray-600 text-sm">
+              ¿Ya tienes cuenta?
+              <a
+                href="/login"
+                class="text-primary font-semibold hover:underline ml-1"
+              >
+                Inicia sesión aquí
+              </a>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
+  </AuthRedirect>
 </Layout>
 
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    console.log("Script de registro cargado");
+
+    const nameInput = document.getElementById("name") as HTMLInputElement;
+    const emailInput = document.getElementById("email") as HTMLInputElement;
+    const passwordInput = document.getElementById(
+      "password"
+    ) as HTMLInputElement;
+    const confirmPasswordInput = document.getElementById(
+      "confirmPassword"
+    ) as HTMLInputElement;
+    const registerButton = document.getElementById(
+      "register-button"
+    ) as HTMLButtonElement;
+    const togglePasswordButton = document.getElementById(
+      "toggle-password"
+    ) as HTMLButtonElement;
+    const toggleConfirmPasswordButton = document.getElementById(
+      "toggle-confirm-password"
+    ) as HTMLButtonElement;
+    const errorDiv = document.getElementById("error-message");
+    const successDiv = document.getElementById("success-message");
+    const passwordMatchSpan = document.getElementById("password-match");
+    const strength1 = document.getElementById("strength-1");
+    const strength2 = document.getElementById("strength-2");
+    const strength3 = document.getElementById("strength-3");
+
+    if (
+      !nameInput ||
+      !emailInput ||
+      !passwordInput ||
+      !confirmPasswordInput ||
+      !registerButton ||
+      !togglePasswordButton ||
+      !toggleConfirmPasswordButton
+    ) {
+      console.error("No se encontraron los elementos del formulario");
+      return;
+    }
+
+    console.log("Elementos encontrados, agregando event listeners");
+
+    // Función para validar email
+    function isValidEmail(email: string): boolean {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+
+    // Función para evaluar fortaleza de contraseña
+    function evaluatePasswordStrength(password: string): number {
+      let strength = 0;
+      if (password.length >= 6) strength++;
+      if (/[A-Z]/.test(password)) strength++;
+      if (/[0-9]/.test(password)) strength++;
+      return strength;
+    }
+
+    // Función para actualizar indicador de fortaleza
+    function updatePasswordStrength(password: string) {
+      const strength = evaluatePasswordStrength(password);
+
+      if (strength1 && strength2 && strength3) {
+        strength1.className = `w-2 h-2 rounded-full ${strength >= 1 ? "bg-red-500" : "bg-gray-300"}`;
+        strength2.className = `w-2 h-2 rounded-full ${strength >= 2 ? "bg-yellow-500" : "bg-gray-300"}`;
+        strength3.className = `w-2 h-2 rounded-full ${strength >= 3 ? "bg-green-500" : "bg-gray-300"}`;
+      }
+    }
+
+    // Función para verificar coincidencia de contraseñas
+    function checkPasswordMatch() {
+      const password = passwordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
+
+      if (passwordMatchSpan) {
+        if (confirmPassword === "") {
+          passwordMatchSpan.textContent = "Las contraseñas deben coincidir";
+          passwordMatchSpan.className = "font-medium text-gray-500";
+        } else if (password === confirmPassword) {
+          passwordMatchSpan.textContent = "✓ Las contraseñas coinciden";
+          passwordMatchSpan.className = "font-medium text-green-600";
+        } else {
+          passwordMatchSpan.textContent = "✗ Las contraseñas no coinciden";
+          passwordMatchSpan.className = "font-medium text-red-600";
+        }
+      }
+    }
+
+    // Event listeners para validación en tiempo real
+    passwordInput.addEventListener("input", function () {
+      updatePasswordStrength(this.value);
+      checkPasswordMatch();
+    });
+
+    confirmPasswordInput.addEventListener("input", checkPasswordMatch);
+
+    // Toggle de contraseña principal
+    let isPasswordVisible = false;
+    togglePasswordButton.addEventListener("click", function () {
+      isPasswordVisible = !isPasswordVisible;
+
+      if (isPasswordVisible) {
+        passwordInput.type = "text";
+        togglePasswordButton.innerHTML = `
+          <svg class="w-5 h-5 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-width="2" d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"/>
+            <path stroke="currentColor" stroke-width="2" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+          </svg>
+        `;
+        togglePasswordButton.setAttribute("aria-label", "Ocultar contraseña");
+      } else {
+        passwordInput.type = "password";
+        togglePasswordButton.innerHTML = `
+          <svg class="w-5 h-5 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.933 13.909A4.357 4.357 0 0 1 3 12c0-1 4-6 9-6m7.6 3.8A5.068 5.068 0 0 1 21 12c0 1-3 6-9 6-.314 0-.62-.014-.918-.04M5 19 19 5m-4 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+          </svg>
+        `;
+        togglePasswordButton.setAttribute("aria-label", "Mostrar contraseña");
+      }
+    });
+
+    // Toggle de confirmación de contraseña
+    let isConfirmPasswordVisible = false;
+    toggleConfirmPasswordButton.addEventListener("click", function () {
+      isConfirmPasswordVisible = !isConfirmPasswordVisible;
+
+      if (isConfirmPasswordVisible) {
+        confirmPasswordInput.type = "text";
+        toggleConfirmPasswordButton.innerHTML = `
+          <svg class="w-5 h-5 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-width="2" d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"/>
+            <path stroke="currentColor" stroke-width="2" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+          </svg>
+        `;
+        toggleConfirmPasswordButton.setAttribute(
+          "aria-label",
+          "Ocultar contraseña"
+        );
+      } else {
+        confirmPasswordInput.type = "password";
+        toggleConfirmPasswordButton.innerHTML = `
+          <svg class="w-5 h-5 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.933 13.909A4.357 4.357 0 0 1 3 12c0-1 4-6 9-6m7.6 3.8A5.068 5.068 0 0 1 21 12c0 1-3 6-9 6-.314 0-.62-.014-.918-.04M5 19 19 5m-4 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+          </svg>
+        `;
+        toggleConfirmPasswordButton.setAttribute(
+          "aria-label",
+          "Mostrar contraseña"
+        );
+      }
+    });
+
+    // Función para manejar el registro
+    registerButton.addEventListener("click", async function () {
+      console.log("Botón de registro clickeado");
+
+      const name = nameInput.value.trim();
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
+
+      console.log("Datos del formulario:", {
+        name,
+        email,
+        password: password ? "***" : "vacío",
+      });
+
+      // Validaciones
+      if (!name || !email || !password || !confirmPassword) {
+        console.log("Campos vacíos detectados");
+        if (errorDiv) {
+          errorDiv.textContent = "Por favor completa todos los campos";
+          errorDiv.style.display = "block";
+        }
+        return;
+      }
+
+      if (!isValidEmail(email)) {
+        console.log("Email inválido");
+        if (errorDiv) {
+          errorDiv.textContent = "Por favor ingresa un email válido";
+          errorDiv.style.display = "block";
+        }
+        return;
+      }
+
+      if (password.length < 6) {
+        console.log("Contraseña muy corta");
+        if (errorDiv) {
+          errorDiv.textContent =
+            "La contraseña debe tener al menos 6 caracteres";
+          errorDiv.style.display = "block";
+        }
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        console.log("Contraseñas no coinciden");
+        if (errorDiv) {
+          errorDiv.textContent = "Las contraseñas no coinciden";
+          errorDiv.style.display = "block";
+        }
+        return;
+      }
+
+      // Mostrar loading
+      registerButton.textContent = "Creando cuenta...";
+      registerButton.setAttribute("disabled", "true");
+
+      // Limpiar mensajes anteriores
+      if (errorDiv) errorDiv.style.display = "none";
+      if (successDiv) successDiv.style.display = "none";
+
+      try {
+        console.log("Iniciando proceso de registro");
+
+        // Simular delay de red
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+
+        // Simular registro exitoso
+        console.log("Registro exitoso, guardando datos");
+
+        // Guardar en localStorage para simular sesión
+        const user = {
+          email: email,
+          name: name,
+          isAuthenticated: true,
+        };
+
+        localStorage.setItem("user", JSON.stringify(user));
+
+        // Disparar evento para actualizar navbar
+        window.dispatchEvent(new CustomEvent("authStateChanged"));
+
+        if (successDiv) {
+          successDiv.textContent = "¡Cuenta creada exitosamente!";
+          successDiv.style.display = "block";
+        }
+
+        console.log("Redirigiendo en 2 segundos...");
+
+        // Redirigir después de 2 segundos
+        setTimeout(() => {
+          window.location.href = "/profile";
+        }, 2000);
+      } catch (err) {
+        console.error("Error durante el registro:", err);
+        if (errorDiv) {
+          errorDiv.textContent =
+            "Error al crear la cuenta. Inténtalo de nuevo.";
+          errorDiv.style.display = "block";
+        }
+      } finally {
+        // Restaurar botón
+        registerButton.textContent = "Crear cuenta";
+        registerButton.removeAttribute("disabled");
+      }
+    });
+
+    // También permitir registro con Enter
+    const handleEnterKey = async (e: KeyboardEvent) => {
+      if (e.key === "Enter") {
+        registerButton.click();
+      }
+    };
+
+    nameInput.addEventListener("keypress", handleEnterKey);
+    emailInput.addEventListener("keypress", handleEnterKey);
+    passwordInput.addEventListener("keypress", handleEnterKey);
+    confirmPasswordInput.addEventListener("keypress", handleEnterKey);
+
+    console.log("Event listeners agregados correctamente");
+  });
+</script>
