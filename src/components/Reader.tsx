@@ -686,8 +686,6 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
             }}
             fontSize={fontSize}
             onFontSizeChange={setFontSize}
-            columns={columns}
-            onColumnsChange={setColumns}
             onOpenSidebar={toggleSidebar}
             onOpenMarksSidebar={() => setMarksSidebarOpen((v) => !v)}
             dropdownOpen={dropdownOpen}
@@ -696,8 +694,6 @@ export const EpubViewer = ({ url, initialTheme = "dark" }: EpubViewerProps) => {
             onToggleFontDropdown={toggleFontDropdown}
             fontSizeBarOpen={fontSizeBarOpen}
             onToggleFontSizeBar={toggleFontSizeBar}
-            columnBarOpen={columnBarOpen}
-            onToggleColumnBar={() => setColumnBarOpen((v) => !v)}
             onCollapseToolbar={() => setDrawerOpen(false)}
             isFullscreen={isFullscreen}
             onToggleFullscreen={toggleFullscreen}

@@ -20,25 +20,22 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Verificar si hay un usuario autenticado usando el servicio
     const checkAuth = () => {
       const currentUser = authService.getCurrentUser();
       setUser(currentUser);
+      setLoading(false);
     };
 
-    // Verificar al montar el componente
     checkAuth();
 
-    // Escuchar cambios en localStorage para actualizar el estado
     const handleStorageChange = () => {
       checkAuth();
     };
 
     window.addEventListener("storage", handleStorageChange);
-
-    // También escuchar eventos personalizados para cambios de auth
     window.addEventListener("authStateChanged", handleStorageChange);
 
     return () => {
@@ -135,65 +132,69 @@ const Navbar = () => {
 
             {/* Botones de carrito y perfil para móvil */}
             <div className="md:hidden flex items-center gap-3">
-              {user && (
-                <a
-                  href="/cart"
-                  aria-label="Carro de compras"
-                  className="relative"
-                >
-                  <svg
-                    className="w-7 h-7 text-primary-light rounded-full border border-primary-light p-1.5 transition-colors duration-200 hover:bg-white hover:text-primary hover:border-primary"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M4 4a1 1 0 0 1 1-1h1.5a1 1 0 0 1 .979.796L7.939 6H19a1 1 0 0 1 .979 1.204l-1.25 6a1 1 0 0 1-.979.796H9.605l.208 1H17a3 3 0 1 1-2.83 2h-2.34a3 3 0 1 1-4.009-1.76L5.686 5H5a1 1 0 0 1-1-1Z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  {/* Indicador de cantidad (opcional) */}
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-                    0
-                  </span>
-                </a>
-              )}
-              {user ? (
-                <button
-                  onClick={handleLogout}
-                  aria-label="Cerrar sesión"
-                  className="relative"
-                >
-                  <svg
-                    className="w-7 h-7 text-primary-light rounded-full border border-primary-light p-1.5 transition-colors duration-200 hover:bg-white hover:text-primary hover:border-primary"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-              ) : (
-                <a
-                  href="/login"
-                  aria-label="Iniciar sesión"
-                  className="relative"
-                >
-                  <svg
-                    className="w-7 h-7 text-primary-light rounded-full border border-primary-light p-1.5 transition-colors duration-200 hover:bg-white hover:text-primary hover:border-primary"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M12 20a7.966 7.966 0 0 1-5.002-1.756v-.683c0-1.794 1.492-3.25 3.333-3.25h3.334c1.84 0 3.333 1.456 3.333 3.25v.683A7.966 7.966 0 0 1 12 20ZM2 12C2 6.477 6.477 2 12 2s10 4.477 10 10c0 5.5-4.44 9.963-9.932 10h-.138C6.438 21.962 2 17.5 2 12Zm10-5c-1.84 0-3.333 1.455-3.333 3.25S10.159 13.5 12 13.5c1.84 0 3.333-1.455 3.333-3.25S13.841 7 12 7Z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </a>
+              {loading ? null : (
+                <>
+                  {user && (
+                    <a
+                      href="/cart"
+                      aria-label="Carro de compras"
+                      className="relative"
+                    >
+                      <svg
+                        className="w-7 h-7 text-primary-light rounded-full border border-primary-light p-1.5 transition-colors duration-200 hover:bg-white hover:text-primary hover:border-primary"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M4 4a1 1 0 0 1 1-1h1.5a1 1 0 0 1 .979.796L7.939 6H19a1 1 0 0 1 .979 1.204l-1.25 6a1 1 0 0 1-.979.796H9.605l.208 1H17a3 3 0 1 1-2.83 2h-2.34a3 3 0 1 1-4.009-1.76L5.686 5H5a1 1 0 0 1-1-1Z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      {/* Indicador de cantidad (opcional) */}
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                        0
+                      </span>
+                    </a>
+                  )}
+                  {user ? (
+                    <button
+                      onClick={handleLogout}
+                      aria-label="Cerrar sesión"
+                      className="relative"
+                    >
+                      <svg
+                        className="w-7 h-7 text-primary-light rounded-full border border-primary-light p-1.5 transition-colors duration-200 hover:bg-white hover:text-primary hover:border-primary"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                  ) : (
+                    <a
+                      href="/login"
+                      aria-label="Iniciar sesión"
+                      className="relative"
+                    >
+                      <svg
+                        className="w-7 h-7 text-primary-light rounded-full border border-primary-light p-1.5 transition-colors duration-200 hover:bg-white hover:text-primary hover:border-primary"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M12 20a7.966 7.966 0 0 1-5.002-1.756v-.683c0-1.794 1.492-3.25 3.333-3.25h3.334c1.84 0 3.333 1.456 3.333 3.25v.683A7.966 7.966 0 0 1 12 20ZM2 12C2 6.477 6.477 2 12 2s10 4.477 10 10c0 5.5-4.44 9.963-9.932 10h-.138C6.438 21.962 2 17.5 2 12Zm10-5c-1.84 0-3.333 1.455-3.333 3.25S10.159 13.5 12 13.5c1.84 0 3.333-1.455 3.333-3.25S13.841 7 12 7Z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </a>
+                  )}
+                </>
               )}
             </div>
 
@@ -205,80 +206,84 @@ const Navbar = () => {
               <div className="flex-1 max-w-xl min-w-0 mr-4">
                 <SearchButton />
               </div>
-              {user && (
-                <a href="/cart" aria-label="Carro de compras" className="ml-2">
-                  {/* Ícono de carrito */}
-                  <svg
-                    className="w-8 h-8 text-primary-light rounded-3xl border border-primary-light p-1 transition-colors duration-200 hover:bg-white hover:text-primary-light hover:border-primary"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M4 4a1 1 0 0 1 1-1h1.5a1 1 0 0 1 .979.796L7.939 6H19a1 1 0 0 1 .979 1.204l-1.25 6a1 1 0 0 1-.979.796H9.605l.208 1H17a3 3 0 1 1-2.83 2h-2.34a3 3 0 1 1-4.009-1.76L5.686 5H5a1 1 0 0 1-1-1Z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </a>
-              )}
-              {user ? (
-                <div className="ml-2 flex items-center gap-1">
-                  <a
-                    href="/profile"
-                    aria-label="Perfil"
-                    className="flex items-center gap-1"
-                  >
-                    {/* Ícono de perfil */}
-                    <svg
-                      className="w-7 h-7 text-primary-light hover:text-primary-light rounded-3xl border border-primary-light transition-colors duration-200 hover:bg-white hover:text-primary hover:border-primary"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M12 20a7.966 7.966 0 0 1-5.002-1.756v-.683c0-1.794 1.492-3.25 3.333-3.25h3.334c1.84 0 3.333 1.456 3.333 3.25v.683A7.966 7.966 0 0 1 12 20ZM2 12C2 6.477 6.477 2 12 2s10 4.477 10 10c0 5.5-4.44 9.963-9.932 10h-.138C6.438 21.962 2 17.5 2 12Zm10-5c-1.84 0-3.333 1.455-3.333 3.25S10.159 13.5 12 13.5c1.84 0 3.333-1.455 3.333-3.25S13.841 7 12 7Z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    <span className="text-xs font-bold">{user.name.toUpperCase()}</span>
-                  </a>
-                  <button
-                    onClick={handleLogout}
-                    aria-label="Cerrar sesión"
-                    className="ml-2 text-xs font-bold text-primary-light hover:text-red-400 transition-colors"
-                  >
-                    SALIR
-                  </button>
-                </div>
-              ) : (
-                <div className="ml-2 flex items-center gap-3">
-                  <a
-                    href="/login"
-                    aria-label="Iniciar sesión"
-                    className="flex items-center gap-1"
-                  >
-                    {/* Ícono de login */}
-                    <svg
-                      className="w-7 h-7 text-primary-light hover:text-primary-light rounded-3xl border border-primary-light transition-colors duration-200 hover:bg-white hover:text-primary hover:border-primary"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M12 20a7.966 7.966 0 0 1-5.002-1.756v-.683c0-1.794 1.492-3.25 3.333-3.25h3.334c1.84 0 3.333 1.456 3.333 3.25v.683A7.966 7.966 0 0 1 12 20ZM2 12C2 6.477 6.477 2 12 2s10 4.477 10 10c0 5.5-4.44 9.963-9.932 10h-.138C6.438 21.962 2 17.5 2 12Zm10-5c-1.84 0-3.333 1.455-3.333 3.25S10.159 13.5 12 13.5c1.84 0 3.333-1.455 3.333-3.25S13.841 7 12 7Z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    <span className="text-xs font-bold">INICIAR SESIÓN</span>
-                  </a>
-                  <a
-                    href="/register"
-                    aria-label="Registrarse"
-                    className="flex items-center gap-1"
-                  >
-                    <span className="text-xs font-bold">REGISTRO</span>
-                  </a>
-                </div>
+              {loading ? null : (
+                <>
+                  {user && (
+                    <a href="/cart" aria-label="Carro de compras" className="ml-2">
+                      {/* Ícono de carrito */}
+                      <svg
+                        className="w-8 h-8 text-primary-light rounded-3xl border border-primary-light p-1 transition-colors duration-200 hover:bg-white hover:text-primary-light hover:border-primary"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M4 4a1 1 0 0 1 1-1h1.5a1 1 0 0 1 .979.796L7.939 6H19a1 1 0 0 1 .979 1.204l-1.25 6a1 1 0 0 1-.979.796H9.605l.208 1H17a3 3 0 1 1-2.83 2h-2.34a3 3 0 1 1-4.009-1.76L5.686 5H5a1 1 0 0 1-1-1Z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </a>
+                  )}
+                  {user ? (
+                    <div className="ml-2 flex items-center gap-1">
+                      <a
+                        href="/profile"
+                        aria-label="Perfil"
+                        className="flex items-center gap-1"
+                      >
+                        {/* Ícono de perfil */}
+                        <svg
+                          className="w-7 h-7 text-primary-light hover:text-primary-light rounded-3xl border border-primary-light transition-colors duration-200 hover:bg-white hover:text-primary hover:border-primary"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M12 20a7.966 7.966 0 0 1-5.002-1.756v-.683c0-1.794 1.492-3.25 3.333-3.25h3.334c1.84 0 3.333 1.456 3.333 3.25v.683A7.966 7.966 0 0 1 12 20ZM2 12C2 6.477 6.477 2 12 2s10 4.477 10 10c0 5.5-4.44 9.963-9.932 10h-.138C6.438 21.962 2 17.5 2 12Zm10-5c-1.84 0-3.333 1.455-3.333 3.25S10.159 13.5 12 13.5c1.84 0 3.333-1.455 3.333-3.25S13.841 7 12 7Z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        <span className="text-xs font-bold">{user.name.toUpperCase()}</span>
+                      </a>
+                      <button
+                        onClick={handleLogout}
+                        aria-label="Cerrar sesión"
+                        className="ml-2 text-xs font-bold text-primary-light hover:text-red-400 transition-colors"
+                      >
+                        SALIR
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="ml-2 flex items-center gap-3">
+                      <a
+                        href="/login"
+                        aria-label="Iniciar sesión"
+                        className="flex items-center gap-1"
+                      >
+                        {/* Ícono de login */}
+                        <svg
+                          className="w-7 h-7 text-primary-light hover:text-primary-light rounded-3xl border border-primary-light transition-colors duration-200 hover:bg-white hover:text-primary hover:border-primary"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M12 20a7.966 7.966 0 0 1-5.002-1.756v-.683c0-1.794 1.492-3.25 3.333-3.25h3.334c1.84 0 3.333 1.456 3.333 3.25v.683A7.966 7.966 0 0 1 12 20ZM2 12C2 6.477 6.477 2 12 2s10 4.477 10 10c0 5.5-4.44 9.963-9.932 10h-.138C6.438 21.962 2 17.5 2 12Zm10-5c-1.84 0-3.333 1.455-3.333 3.25S10.159 13.5 12 13.5c1.84 0 3.333-1.455 3.333-3.25S13.841 7 12 7Z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        <span className="text-xs font-bold">INICIAR SESIÓN</span>
+                      </a>
+                      <a
+                        href="/register"
+                        aria-label="Registrarse"
+                        className="flex items-center gap-1"
+                      >
+                        <span className="text-xs font-bold">REGISTRO</span>
+                      </a>
+                    </div>
+                  )}
+                </>
               )}
             </div>
 
@@ -337,7 +342,7 @@ const Navbar = () => {
               <div className="border-t border-gray-200 my-2"></div>
 
               {/* Enlaces de navegación */}
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <h3 className="text-sm font-semibold text-gray-700 mb-3">
                   Navegación
                 </h3>
@@ -363,15 +368,9 @@ const Navbar = () => {
                 />
               </div>
 
-              {/* Separador */}
-              <div className="border-t border-gray-200 my-2"></div>
-
               {/* Acciones rápidas */}
-              <div className="space-y-3">
-                <h3 className="text-sm font-semibold text-gray-700 mb-3">
-                  Acciones
-                </h3>
-                <div className="flex gap-4">
+              <div className="space-y-1">
+                <div className="flex gap-1">
                   {user && (
                     <a
                       href="/cart"
