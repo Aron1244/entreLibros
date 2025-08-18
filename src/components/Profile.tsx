@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { authService } from "../services/authService";
+import type { User } from "../types/auth";
 
 interface Book {
   id: string;
@@ -19,11 +21,46 @@ interface ReadingStats {
 const UserProfile = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [isEditing, setIsEditing] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Datos de ejemplo
-  const user = {
-    name: "Test User",
-    email: "test.user@email.com",
+  useEffect(() => {
+    // Verificar si el usuario está autenticado usando el servicio
+    const checkAuth = () => {
+      const currentUser = authService.getCurrentUser();
+      if (currentUser) {
+        setUser(currentUser);
+        setIsLoading(false);
+      } else {
+        // Si no hay usuario autenticado, redirigir al login
+        window.location.href = '/login';
+        return;
+      }
+    };
+
+    checkAuth();
+
+    // Escuchar cambios en el estado de autenticación
+    const handleAuthChange = () => {
+      checkAuth();
+    };
+
+    window.addEventListener('authStateChanged', handleAuthChange);
+
+    return () => {
+      window.removeEventListener('authStateChanged', handleAuthChange);
+    };
+  }, []);
+
+  const handleLogout = () => {
+    authService.logout();
+    window.location.href = '/login';
+  };
+
+  // Datos de ejemplo para el perfil
+  const userProfile = {
+    name: user?.name || "Usuario",
+    email: user?.email || "usuario@email.com",
     avatar: "https://uploads.coppermind.net/thumb/Windrunner_and_Heavenly_Ones_by_Georgi_Madzharov.jpg/483px-Windrunner_and_Heavenly_Ones_by_Georgi_Madzharov.jpg",
     joinDate: "Enero 2024",
     bio: "Amante de la literatura clásica y la poesía. Siempre en busca de nuevas historias que me transporten a otros mundos.",
@@ -43,21 +80,21 @@ const UserProfile = () => {
       id: "1",
       title: "Cien años de soledad",
       author: "Gabriel García Márquez",
-      cover: "/api/placeholder/80/120",
+      cover: "https://via.placeholder.com/80x120/8B4513/FFFFFF?text=Libro",
       progress: 100
     },
     {
       id: "2",
       title: "El Aleph",
       author: "Jorge Luis Borges",
-      cover: "/api/placeholder/80/120",
+      cover: "https://via.placeholder.com/80x120/2F4F4F/FFFFFF?text=Libro",
       progress: 85
     },
     {
       id: "3",
       title: "Pedro Páramo",
       author: "Juan Rulfo",
-      cover: "/api/placeholder/80/120",
+      cover: "https://via.placeholder.com/80x120/556B2F/FFFFFF?text=Libro",
       progress: 60
     }
   ];
@@ -67,7 +104,7 @@ const UserProfile = () => {
       id: "4",
       title: "Los detectives salvajes",
       author: "Roberto Bolaño",
-      cover: "/api/placeholder/80/120",
+      cover: "https://via.placeholder.com/80x120/8B0000/FFFFFF?text=Libro",
       progress: 45
     }
   ];
@@ -79,6 +116,14 @@ const UserProfile = () => {
     { id: "settings", label: "Configuración", icon: "⚙️" }
   ];
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-primary-dark pt-20 flex items-center justify-center">
+        <div className="text-white text-xl">Cargando...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-primary-dark pt-20">
       <div className="container mx-auto px-4 py-8">
@@ -88,8 +133,8 @@ const UserProfile = () => {
             <div className="absolute -bottom-16 left-8">
               <div className="relative">
                 <img
-                  src={user.avatar}
-                  alt={user.name}
+                  src={userProfile.avatar}
+                  alt={userProfile.name}
                   className="w-32 h-32 rounded-full border-4 border-white shadow-lg bg-secondary-light"
                 />
                 <button className="absolute bottom-0 right-0 bg-primary text-white p-2 rounded-full shadow-lg hover:bg-primary-dark transition-colors">
@@ -104,17 +149,25 @@ const UserProfile = () => {
           <div className="pt-20 pb-6 px-8">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-primary-dark mb-2">{user.name}</h1>
-                <p className="text-secondary text-lg mb-2">{user.location}</p>
-                <p className="text-gray-600 mb-4">Miembro desde {user.joinDate}</p>
-                <p className="text-gray-700 max-w-2xl">{user.bio}</p>
+                <h1 className="text-3xl font-bold text-primary-dark mb-2">{userProfile.name}</h1>
+                <p className="text-secondary text-lg mb-2">{userProfile.location}</p>
+                <p className="text-gray-600 mb-4">Miembro desde {userProfile.joinDate}</p>
+                <p className="text-gray-700 max-w-2xl">{userProfile.bio}</p>
               </div>
-              <button
-                onClick={() => setIsEditing(!isEditing)}
-                className="mt-4 md:mt-0 bg-primary text-white px-6 py-3 rounded-xl hover:bg-primary-dark transition-colors font-semibold"
-              >
-                {isEditing ? "Guardar" : "Editar Perfil"}
-              </button>
+              <div className="flex gap-3 mt-4 md:mt-0">
+                <button
+                  onClick={() => setIsEditing(!isEditing)}
+                  className="bg-primary text-white px-6 py-3 rounded-xl hover:bg-primary-dark transition-colors font-semibold"
+                >
+                  {isEditing ? "Guardar" : "Editar Perfil"}
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="bg-red-500 text-white px-6 py-3 rounded-xl hover:bg-red-600 transition-colors font-semibold"
+                >
+                  Cerrar Sesión
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -270,7 +323,7 @@ const UserProfile = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
                     <input
                       type="text"
-                      defaultValue={user.name}
+                      defaultValue={userProfile.name}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                     />
                   </div>
@@ -278,14 +331,14 @@ const UserProfile = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
                     <input
                       type="email"
-                      defaultValue={user.email}
+                      defaultValue={userProfile.email}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Biografía</label>
                     <textarea
-                      defaultValue={user.bio}
+                      defaultValue={userProfile.bio}
                       rows={3}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                     />
@@ -294,7 +347,7 @@ const UserProfile = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Ubicación</label>
                     <input
                       type="text"
-                      defaultValue={user.location}
+                      defaultValue={userProfile.location}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                     />
                   </div>

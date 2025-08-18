@@ -1,8 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import UserProfile from '../components/Profile';
+import ProtectedRoute from '../components/ProtectedRoute';
 ---
 
 <Layout title="Mi Perfil - Entre Libros">
-  <UserProfile client:load />
+  <ProtectedRoute client:load>
+    <UserProfile client:load />
+  </ProtectedRoute>
 </Layout>

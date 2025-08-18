@@ -1,13 +1,15 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import CartReact from '../components/Cart'; // Ajusta la ruta según tu estructura
+import CartReact from '../components/Cart';
+import ProtectedRoute from '../components/ProtectedRoute';
 ---
 
-<Layout>
+<Layout title="Carrito - Entre Libros">
+  <ProtectedRoute client:load>
     <main class="bg-primary-dark">
       <CartReact client:load />
-      <!-- client:load para hidratar y activar React en cliente -->
     </main>
+  </ProtectedRoute>
 </Layout>
 
 

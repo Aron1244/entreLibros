@@ -12,8 +12,6 @@ interface EpubToolbarProps {
   onFontChange: (font: FontType) => void;
   fontSize: number;
   onFontSizeChange: (size: number) => void;
-  columns: number;
-  onColumnsChange: (columns: number) => void;
   onOpenSidebar: () => void;
   onOpenMarksSidebar: () => void;
   dropdownOpen: boolean;
@@ -22,9 +20,6 @@ interface EpubToolbarProps {
   onToggleFontDropdown: () => void;
   fontSizeBarOpen: boolean;
   onToggleFontSizeBar: () => void;
-  columnBarOpen: boolean;
-  onToggleColumnBar: () => void;
-  // NUEVO: para plegar la barra
   onCollapseToolbar: () => void;
   // NUEVO: para pantalla completa
   isFullscreen: boolean;
@@ -40,8 +35,6 @@ const EpubToolbar: React.FC<EpubToolbarProps> = ({
   onFontChange,
   fontSize,
   onFontSizeChange,
-  columns,
-  onColumnsChange,
   onOpenSidebar,
   onOpenMarksSidebar,
   dropdownOpen,
@@ -50,8 +43,6 @@ const EpubToolbar: React.FC<EpubToolbarProps> = ({
   onToggleFontDropdown,
   fontSizeBarOpen,
   onToggleFontSizeBar,
-  columnBarOpen,
-  onToggleColumnBar,
   onCollapseToolbar,
   isFullscreen,
   onToggleFullscreen,
@@ -219,46 +210,6 @@ const EpubToolbar: React.FC<EpubToolbarProps> = ({
                 />
                 <div className="text-center text-sm font-medium text-white">
                   {Math.round(fontSize * 100)}%
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Columnas */}
-        <div className="relative">
-          <button
-            className="w-full flex items-center justify-between p-3 rounded-xl bg-secondary-dark border border-gray-700 shadow-sm hover:shadow-md hover:border-primary hover:bg-primary-dark transition-all duration-200 group"
-            onClick={onToggleColumnBar}
-          >
-            <div className="flex items-center space-x-3">
-              <div className="p-2 rounded-lg bg-gradient-to-br from-orange-400 to-red-500 text-white">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </div>
-              <span className="font-medium text-white group-hover:text-primary-light">Columnas</span>
-            </div>
-            <span className="text-sm text-primary-light group-hover:text-white">{columns}</span>
-          </button>
-          {columnBarOpen && (
-            <div className="absolute right-0 mt-2 w-72 bg-gray-800 rounded-xl shadow-xl border border-gray-700 z-30 p-4">
-              <div className="space-y-3">
-                <div className="flex justify-between text-sm text-primary-light">
-                  <span>1 Columna</span>
-                  <span>3 Columnas</span>
-                </div>
-                <input
-                  type="range"
-                  min="1"
-                  max="3"
-                  step="1"
-                  value={columns}
-                  onChange={(e) => onColumnsChange(parseInt(e.target.value))}
-                  className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-                />
-                <div className="text-center text-sm font-medium text-white">
-                  {columns} {columns === 1 ? 'Columna' : 'Columnas'}
                 </div>
               </div>
             </div>
