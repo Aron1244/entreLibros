@@ -28,7 +28,7 @@ const MarksSidebar: React.FC<MarksSidebarProps> = ({
 }) => {
   if (!open) return null;
   return (
-    <div className="fixed sm:absolute left-0 top-0 z-30 h-full w-full sm:w-64 bg-white text-black shadow-xl overflow-y-auto transition-all duration-300">
+    <div className="fixed sm:absolute left-0 top-0 z-50 h-full w-full sm:w-64 bg-white text-black shadow-xl overflow-y-auto transition-all duration-300">
       <div className="flex justify-between items-center p-4">
         <h2 className="font-bold text-lg">Marcas</h2>
         <button onClick={onClose} className="text-xl">×</button>
