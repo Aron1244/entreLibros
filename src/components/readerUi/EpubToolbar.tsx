@@ -1,7 +1,8 @@
 import React from "react";
+import "../../styles/fonts.css";
 
 type ITheme = "light" | "dark";
-type FontType = "serif" | "sans" | "monospace";
+type FontType = "serif" | "sans" | "monospace" | "jetbrains";
 
 interface EpubToolbarProps {
   theme: ITheme;
@@ -172,6 +173,25 @@ const EpubToolbar: React.FC<EpubToolbarProps> = ({
                 <span className={`text-lg ${font === "monospace" ? "font-semibold text-blue-400" : "text-white"}`} style={{fontFamily: 'monospace'}}>Aa</span>
                 <span className={`${font === "monospace" ? "font-semibold text-blue-400" : "text-white"}`}>Monospace</span>
               </button>
+              <button
+                onClick={() => onFontChange("'JetBrains Mono', monospace" as unknown as FontType)}
+                className={`w-full flex items-center space-x-3 p-3 hover:bg-gray-700 transition-colors ${
+                  font === "jetbrains" ? "bg-blue-900/20 border-r-2 border-blue-500" : ""
+                }`}
+              >
+                <span
+                  className={`text-lg ${font === "jetbrains" ? "font-semibold text-blue-400" : "text-white"}`}
+                  style={{ fontFamily: "var(--font-jetbrains)" }} // <-- aplica sólo aquí
+                >
+                  Aa
+                </span>
+                <span
+                  className={`${font === "jetbrains" ? "font-semibold text-blue-400" : "text-white"}`}
+                  style={{ fontFamily: "var(--font-jetbrains)" }} // <-- opcional: etiqueta también
+                >
+                  Jetbrains Mono
+                </span>
+              </button>
             </div>
           )}
         </div>
@@ -196,13 +216,13 @@ const EpubToolbar: React.FC<EpubToolbarProps> = ({
             <div className="absolute right-0 mt-2 w-72 bg-gray-800 rounded-xl shadow-xl border border-gray-700 z-30 p-4">
               <div className="space-y-3">
                 <div className="flex justify-between text-sm text-primary-light">
-                  <span>50%</span>
-                  <span>150%</span>
+                  <span>100%</span>
+                  <span>500%</span>
                 </div>
                 <input
                   type="range"
-                  min="0.5"
-                  max="1.5"
+                  min="1"
+                  max="5"
                   step="0.1"
                   value={fontSize}
                   onChange={(e) => onFontSizeChange(parseFloat(e.target.value))}
